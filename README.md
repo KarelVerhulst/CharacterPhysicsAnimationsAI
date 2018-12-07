@@ -4,7 +4,7 @@ For school we have an assignement to make a level where a character can walk aro
 This character can walk, run, jump and crouch.
 He has also some actions like push boxes, click a switch, climb a ladder and pick up a sword.
 
-I used a charactercontroller to make all this happen. Together with animations from [mixamo](mixamo.com).
+I used a charactercontroller to make all this happen. Together with animations from [mixamo](https://www.mixamo.com).
 All the actions and locomotions are physic based.
 
 There is alse a NPC that will do some AI.
