@@ -51,8 +51,7 @@ public class CharacterBehaviour : MonoBehaviour
     {
         //_movement = _ic.KeyMove();
         _movement = _ic.GetLeftJoystickInput();
-
-        Debug.Log(_movement);
+        
         if (_ic.IsButtonAPressed())
         {
             _isJumping = true;
@@ -61,19 +60,15 @@ public class CharacterBehaviour : MonoBehaviour
 
     void FixedUpdate()
     {
+        ApplyGround();
         ApplyGravity();
-        if (_characterController.isGrounded)
-        {
-            _jump = false;
-            ApplyGround();
-            ApplyMovement();
-            ApplyGroundDrag();
-            
-            LimitMaximumRunningSpeed();
+        ApplyMovement();
+        ApplyGroundDrag();
 
-            ApplyJump();
-        }
+        LimitMaximumRunningSpeed();
 
+        ApplyJump();
+        
         MoveAnimation();
         JumpAnimation();
 
@@ -83,19 +78,29 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void ApplyGravity()
     {
-        _velocity += Physics.gravity * Time.fixedDeltaTime; // g[m/s^2] * t[s]
+        if (!_characterController.isGrounded)
+        {
+            _velocity += Physics.gravity * Time.deltaTime; // g[m/s^2] * t[s]
+        }
     }
 
     private void ApplyGround()
     {
-        _velocity -= Vector3.Project(_velocity, Physics.gravity);
+        if (_characterController.isGrounded)
+        {
+            _velocity -= Vector3.Project(_velocity, Physics.gravity);
+        }
+        
     }
 
     private void ApplyMovement()
     {
-        Vector3 relativeMovement = RelativeDirection(_movement);
+        if (_characterController.isGrounded)
+        {
+            Vector3 relativeMovement = RelativeDirection(_movement);
 
-        _velocity += relativeMovement * _acceleration * Time.fixedDeltaTime; // F(= m.a) [m/s^2] * t [s]
+            _velocity += relativeMovement * _acceleration * Time.deltaTime; // F(= m.a) [m/s^2] * t [s]
+        }
     }
 
     private Vector3 RelativeDirection(Vector3 direction)
@@ -109,7 +114,10 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void ApplyGroundDrag()
     {
-        _velocity = _velocity * (1 - Time.deltaTime * _dragOnGround);
+        if (_characterController.isGrounded)
+        {
+            _velocity = _velocity * (1 - Time.deltaTime * _dragOnGround);
+        }
     }
 
     private void LimitMaximumRunningSpeed()
@@ -124,13 +132,18 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void DoMovement()
     {
-        Vector3 displacement = _velocity * Time.fixedDeltaTime;
+        Vector3 displacement = _velocity * Time.deltaTime;
 
         _characterController.Move(displacement);
     }
 
     private void ApplyJump()
     {
+        if (_characterController.isGrounded)
+        {
+            _jump = false;
+        }
+
         if (_isJumping && _characterController.isGrounded)
         {
             _jump = true;
