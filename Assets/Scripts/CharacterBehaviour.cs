@@ -32,7 +32,6 @@ public class CharacterBehaviour : MonoBehaviour
     [SerializeField]
     private float _dragOnGround = 3f;
 
-
     //animations
     private Animator _animator;
     private int _horizontalVelocityParam = Animator.StringToHash("HorizontalVelocity");
@@ -51,15 +50,21 @@ public class CharacterBehaviour : MonoBehaviour
     {
         //_movement = _ic.KeyMove();
         _movement = _ic.GetLeftJoystickInput();
-        
+                
         if (_ic.IsButtonAPressed())
         {
             _isJumping = true;
+        }
+
+        if (_ic.IsLeftJoystickButtonPressed())
+        {
+            Debug.Log("Crouch");
         }
     }
 
     void FixedUpdate()
     {
+        Debug.Log(_velocity.y);
         ApplyGround();
         ApplyGravity();
         ApplyMovement();
@@ -116,7 +121,23 @@ public class CharacterBehaviour : MonoBehaviour
     {
         if (_characterController.isGrounded)
         {
+            if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately 
+            {
+                _velocity = Vector3.zero;
+            }
+            if (_movement.magnitude <= 0.6)
+            {
+                _acceleration = 15;
+                _dragOnGround = 10;
+            }
+            else
+            {
+                _acceleration = 20;
+                _dragOnGround = 5;
+            }
+
             _velocity = _velocity * (1 - Time.deltaTime * _dragOnGround);
+
         }
     }
 
@@ -132,28 +153,26 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void DoMovement()
     {
-        Vector3 displacement = _velocity * Time.deltaTime;
+        Vector3 displacement = _velocity  * Time.deltaTime;
 
         _characterController.Move(displacement);
     }
 
     private void ApplyJump()
     {
-        if (_characterController.isGrounded)
-        {
-            _jump = false;
-        }
 
         if (_isJumping && _characterController.isGrounded)
         {
             _jump = true;
             _characterController.center = new Vector3(0, 1.4f, 0);
             _characterController.height = 1.4f;
+
             _velocity += -Physics.gravity.normalized * Mathf.Sqrt(2 * Physics.gravity.magnitude * _jumpHeight);
             _isJumping = false;
         }
         else
         {
+            _jump = false;
             _characterController.center = new Vector3(0, 1, 0);
             _characterController.height = 2f;
         }
