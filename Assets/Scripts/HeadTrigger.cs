@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class HeadTrigger : MonoBehaviour {
 
+    /*
+     * Check if something is something above
+     */
     public bool IsInTunnel { get; set; }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag != "Player")
-        {
-            IsInTunnel = true;
-        }
-    }
-
+    
     private void OnTriggerStay(Collider other)
     {
         if (other.tag != "Player")
         {
-            Debug.Log("should i stay our should i go");
             IsInTunnel = true;
         }
     }

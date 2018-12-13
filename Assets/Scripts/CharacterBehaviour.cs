@@ -20,7 +20,10 @@ public class CharacterBehaviour : MonoBehaviour
     [SerializeField]
     private float _dragOnGround = 3f;
 
+    //externe scripts
     private InputController _ic = new InputController();
+    private AnimationController _ac;
+
     private CharacterController _characterController;
 
     private Vector3 _velocity = Vector3.zero;
@@ -32,15 +35,6 @@ public class CharacterBehaviour : MonoBehaviour
     float currentHeight;
     Vector3 currentCenter;
 
-    
-
-    //animations
-    private Animator _animator;
-    private int _horizontalVelocityParam = Animator.StringToHash("HorizontalVelocity");
-    private int _verticalVelocityParam = Animator.StringToHash("VerticalVelocity");
-    private int _isJumpParam = Animator.StringToHash("IsJumping");
-    private int _isCrouchParam = Animator.StringToHash("IsCrouch");
-
     //test
     private HeadTrigger _headTrigger;
 
@@ -48,7 +42,7 @@ public class CharacterBehaviour : MonoBehaviour
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
-        _animator = this.GetComponent<Animator>();
+        _ac = new AnimationController(this.GetComponent<Animator>());
 
         currentHeight = _characterController.height;
         currentCenter = _characterController.center;
@@ -67,18 +61,22 @@ public class CharacterBehaviour : MonoBehaviour
             _isJumping = true;
         }
 
-        Debug.Log(_headTrigger.IsInTunnel);
+        //Debug.Log(_headTrigger.IsInTunnel);
         if (_ic.IsLeftJoystickButtonPressed() && !_headTrigger.IsInTunnel)
         {
             _isCrouch = !_isCrouch;
-            _animator.SetBool(_isCrouchParam, _isCrouch);
             EditCharactControllerParams(_isCrouch);
         }
+
+        //animations
+        _ac.MoveAnimation(_movement);
+        _ac.JumpAnimation(_jump);
+        _ac.CrouchAnimation(_isCrouch);
     }
     
     void FixedUpdate()
     {
-        //Debug.Log(_velocity.y);
+        //Locomotions
         ApplyGround();
         ApplyGravity();
         ApplyMovement();
@@ -87,11 +85,10 @@ public class CharacterBehaviour : MonoBehaviour
         LimitMaximumRunningSpeed();
 
         ApplyJump();
-        
-        MoveAnimation();
-        JumpAnimation();
 
-        DoMovement();
+        EditMovementFields();
+
+        DoMovement(); 
     }
 
     private void ApplyGravity()
@@ -108,7 +105,6 @@ public class CharacterBehaviour : MonoBehaviour
         {
             _velocity -= Vector3.Project(_velocity, Physics.gravity);
         }
-        
     }
 
     private void ApplyMovement()
@@ -134,32 +130,7 @@ public class CharacterBehaviour : MonoBehaviour
     {
         if (_characterController.isGrounded)
         {
-            if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately 
-            {
-                _velocity = Vector3.zero;
-            }
-            if (!_isCrouch)
-            {
-                
-                if (_movement.magnitude <= 0.6)
-                {
-                    _acceleration = 15;
-                    _dragOnGround = 10;
-                }
-                else if (_movement.magnitude <= 0.4)
-                {
-                    _acceleration = 5;
-                }
-                else
-                {
-                    _acceleration = 20;
-                    _dragOnGround = 5;
-                }
-            }
-            
-
             _velocity = _velocity * (1 - Time.deltaTime * _dragOnGround);
-
         }
     }
 
@@ -182,7 +153,6 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void ApplyJump()
     {
-
         if (_isJumping && _characterController.isGrounded)
         {
             _jump = true;
@@ -195,22 +165,9 @@ public class CharacterBehaviour : MonoBehaviour
             _jump = false;
         }
     }
-
-    private void MoveAnimation()
-    {
-        _animator.SetFloat(_horizontalVelocityParam, _movement.x);
-        _animator.SetFloat(_verticalVelocityParam, _movement.z);
-    }
-
-    private void JumpAnimation()
-    {
-        _animator.SetBool(_isJumpParam, _jump);
-    }
-
+    
     private void EditCharactControllerParams(bool controlObject)
     {
-        
-        
         if (controlObject)
         {
             _characterController.height = 1.3f;
@@ -221,7 +178,48 @@ public class CharacterBehaviour : MonoBehaviour
             _characterController.height = currentHeight;
             _characterController.center = currentCenter;
         }
-        
     }
-    
+
+    private void EditMovementFields()
+    {
+        /*
+         * todo
+         *  code overzichtelijker maken
+         */
+        if (_characterController.isGrounded)
+        {
+            ResetVelocity();
+            
+            if (!_isCrouch)
+            {
+                if (_movement.magnitude <= 0.6)
+                {
+                    _acceleration = 15;
+                    _dragOnGround = 10;
+                }
+                else if (_movement.magnitude <= 0.4)
+                {
+                    _acceleration = 5;
+                }
+                else
+                {
+                    _acceleration = 20;
+                    _dragOnGround = 5;
+                }
+            }
+            else //you are in the crouch statement
+            {
+                _acceleration = 15;
+                _dragOnGround = 10;
+            }
+        }
+    }
+
+    private void ResetVelocity()
+    {
+        if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately 
+        {
+            _velocity = Vector3.zero;
+        }
+    }
 }
