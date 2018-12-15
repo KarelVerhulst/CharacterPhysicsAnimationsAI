@@ -17,9 +17,12 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     //Input Controller
     private InputController _ic = new InputController();
+    private AnimationController _ac;
 
     // Use this for initialization
-    void Start () {}
+    void Start () {
+        _ac = new AnimationController(this.GetComponentInParent<Animator>());
+    }
 
     // Update is called once per frame
     void Update () {
@@ -31,5 +34,8 @@ public class ThirdPersonCamera : MonoBehaviour {
         _v3Rotate.x = Mathf.Clamp(_v3Rotate.x, _rotationLimit.x, _rotationLimit.y);
 
         CharacterPos.transform.localEulerAngles = _v3Rotate;
+
+        //animation
+        _ac.RotateCameraAnimation(_v3Rotate.y);
     }
 }

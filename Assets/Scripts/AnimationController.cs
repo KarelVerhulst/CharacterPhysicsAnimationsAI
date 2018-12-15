@@ -16,7 +16,8 @@ public class AnimationController {
     private int _verticalVelocityParam = Animator.StringToHash("VerticalVelocity");
     private int _isJumpParam = Animator.StringToHash("IsJumping");
     private int _isCrouchParam = Animator.StringToHash("IsCrouch");
-   // private int _horizontalRotationParam = Animator.StringToHash("HorizontalRotation");
+    private int _horizontalRotationParam = Animator.StringToHash("HorizontalRotation");
+    private int _isPickUpObjectParam = Animator.StringToHash("IsPickUpObject");
 
 
     public void MoveAnimation(Vector3 movement)
@@ -33,5 +34,15 @@ public class AnimationController {
     public void CrouchAnimation(bool isCrouch)
     {
         _animator.SetBool(_isCrouchParam, isCrouch);
+    }
+
+    public void RotateCameraAnimation(float camHorRotation)
+    {
+        _animator.SetFloat(_horizontalRotationParam, camHorRotation);
+    }
+
+    public void PickupObjectAnimation(bool isPickup)
+    {
+        _animator.SetBool(_isPickUpObjectParam, isPickup);
     }
 }
