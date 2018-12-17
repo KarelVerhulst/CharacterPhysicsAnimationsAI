@@ -18,12 +18,18 @@ public class AnimationController {
     private int _isCrouchParam = Animator.StringToHash("IsCrouch");
     private int _horizontalRotationParam = Animator.StringToHash("HorizontalRotation");
     private int _isPickUpObjectParam = Animator.StringToHash("IsPickUpObject");
-
+    private int _isSwordActiveOnCharacterParam = Animator.StringToHash("IsSwordActiveOnCharacter");
+   
 
     public void MoveAnimation(Vector3 movement)
     {
         _animator.SetFloat(_horizontalVelocityParam, movement.x);
         _animator.SetFloat(_verticalVelocityParam, movement.z);
+    }
+
+    public void UseSwordLocomotionAnimation(bool isSwordInHand)
+    {
+        _animator.SetBool(_isSwordActiveOnCharacterParam, isSwordInHand);
     }
 
     public void JumpAnimation(bool isJump)

@@ -5,26 +5,18 @@ using UnityEngine;
 public class ActionController : MonoBehaviour {
 
     private Animator _animator;
-    [SerializeField]
-    private Transform _rightHandObj;
-    [SerializeField]
-    private Transform _rightHandCharacter;
-
+    
     private InputController _ic = new InputController();
     private AnimationController _ac;
 
     private bool _isCharacterInTriggerBox = false;
-    private string _setTypeAction;
-
-    private Transform _weapon;
-
-
-    private bool _test = false;
-
+    
 	// Use this for initialization
 	void Start () {
         _animator = GetComponent<Animator>();
         _ac = new AnimationController(_animator);
+
+        
 	}
 	
 	// Update is called once per frame
@@ -32,26 +24,20 @@ public class ActionController : MonoBehaviour {
         
         if (_isCharacterInTriggerBox && _ic.IsButtonXPressed())
         {
-            //DoTheCorrectAction();
-            _test = true;
+            Debug.Log("char is in triggerbox and button x is pressed");
+            _ac.PickupObjectAnimation(true);
         }
-
-        if (_test)
+        else
         {
-            _rightHandObj.transform.position = _rightHandCharacter.transform.position;
-            _rightHandObj.transform.rotation = _rightHandCharacter.transform.rotation;
+            _ac.PickupObjectAnimation(false);
         }
-
-        
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag.Equals("Weapon"))
+        if (other.tag.Equals("Weapon") || other.tag.Equals("Ladder") || other.tag.Equals("Switch"))
         {
             _isCharacterInTriggerBox = true;
-
-            _setTypeAction = other.tag;
         }
     }
 
@@ -59,28 +45,8 @@ public class ActionController : MonoBehaviour {
     {
         if (other.tag.Equals("Weapon"))
         {
-            _weapon = other.transform;
             _isCharacterInTriggerBox = false;
         }
     }
 
-    private void DoTheCorrectAction()
-    {
-        switch (_setTypeAction)
-        {
-            case "Weapon":
-                DoWeaponAction();
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void DoWeaponAction()
-    {
-        Debug.Log("do weapon action");
-        _rightHandObj.transform.position = _rightHandCharacter.transform.position;
-       // _ac.PickupObjectAnimation(_isCharacterInTriggerBox);
-    }
-    
 }
