@@ -2560,6 +2560,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844b1495ce63bdb468c801096df62859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &946150240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946150242}
+  - component: {fileID: 946150241}
+  m_Layer: 0
+  m_Name: Test AI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &946150241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 946150240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 515fcde652cf8e44ca869e5f688fbb34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &946150242
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 946150240}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1122978979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: a979058be591ed641ab7344115ac1eef,
@@ -3595,7 +3635,7 @@ GameObject:
   m_Layer: 0
   m_Name: SwordGrabHandle
   m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
