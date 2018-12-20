@@ -5,7 +5,7 @@ using UnityEngine;
 public class HeadTrigger : MonoBehaviour {
 
     /*
-     * Check if something is something above
+     * Check if something is above the character
      */
     public bool IsInTunnel { get; set; }
     

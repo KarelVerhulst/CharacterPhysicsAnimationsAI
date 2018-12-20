@@ -2,6 +2,10 @@
 
 public class InputController {
 
+    /*
+     *  All the input from the controllers are coded in this file
+     */
+
     public Vector3 GetLeftJoystickInput()
     {
         float h = Input.GetAxis("Xbox_LeftJoystickHorizontal");
@@ -38,6 +42,7 @@ public class InputController {
         return Input.GetButtonDown("Xbox_X");
     }
 
+    //this is a test if you don't have a controller
     public Vector3 KeyMove()
     {
         float h = Input.GetAxis("Horizontal");

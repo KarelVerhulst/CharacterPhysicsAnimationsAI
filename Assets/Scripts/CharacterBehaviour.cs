@@ -5,6 +5,16 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class CharacterBehaviour : MonoBehaviour
 {
+    /*
+     * the main script for the character
+     * in this script the main for the character is used
+     * like the different animation, the locomotion physics, the input controller (joystick)
+     * 
+     * todo 
+     *  - refactor the phsyics in another script
+     * 
+     */
+     
     //locomotion
     [SerializeField]
     private float _acceleration = 3; // [m/s^2]
@@ -19,11 +29,7 @@ public class CharacterBehaviour : MonoBehaviour
     private float _jumpHeight = 1f;
     [SerializeField]
     private float _dragOnGround = 3f;
-
-    //externe scripts
-    private InputController _ic = new InputController();
-    private AnimationController _ac;
-
+    
     private CharacterController _characterController;
 
     private Vector3 _velocity = Vector3.zero;
@@ -35,7 +41,9 @@ public class CharacterBehaviour : MonoBehaviour
     float currentHeight;
     Vector3 currentCenter;
 
-    //test
+    //externe scripts
+    private InputController _ic = new InputController();
+    private AnimationController _ac;
     private HeadTrigger _headTrigger;
 
     // Use this for initialization
@@ -168,6 +176,11 @@ public class CharacterBehaviour : MonoBehaviour
     
     private void EditCharactControllerParams(bool controlObject)
     {
+        // edit the the charactercontroller collider 
+        /*
+         * todo change the if else to switch because the values are different for example crouch and stand
+         */
+
         if (controlObject)
         {
             _characterController.height = 1.3f;
@@ -183,6 +196,8 @@ public class CharacterBehaviour : MonoBehaviour
     private void EditMovementFields()
     {
         /*
+         * edit the acceleration and dragonground if you in an other locomotion speed
+         * 
          * todo
          *  code overzichtelijker maken
          */
@@ -217,9 +232,10 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void ResetVelocity()
     {
-        if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately 
+        if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately set _velocity to 0
         {
-            _velocity = Vector3.zero;
+            _velocity.x = 0;
+            _velocity.z = 0;
         }
     }
 }

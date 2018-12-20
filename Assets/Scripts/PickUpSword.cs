@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class PickUpSword : StateMachineBehaviour {
 
-    public Transform WeaponHandle;
-    public Transform RightHand;
+    [SerializeField]
+    private Transform _weaponHandle;
+    [SerializeField]
+    private Transform _rightHand;
+
+    private AnimationController _ac;
+    private ActionController _actionC;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        WeaponHandle = GameObject.Find("SwordGrabHandle").transform;
-        RightHand = GameObject.Find("mixamorig:RightHandIndex1").transform;
+        _weaponHandle = GameObject.Find("SwordGrabHandle").transform;
+        _rightHand = GameObject.Find("mixamorig:RightHand").transform;
+        _actionC = new ActionController();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -32,21 +38,25 @@ public class PickUpSword : StateMachineBehaviour {
     // OnStateIK is called right after Animator.OnAnimatorIK(). Code that sets up animation IK (inverse kinematics) should be implemented here.
     override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (WeaponHandle != null)
+        if (_weaponHandle != null)
         {
             animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
             animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-            animator.SetIKPosition(AvatarIKGoal.RightHand, WeaponHandle.position);
-            animator.SetIKRotation(AvatarIKGoal.RightHand, WeaponHandle.rotation);
+            animator.SetIKPosition(AvatarIKGoal.RightHand, _weaponHandle.position);
+            animator.SetIKRotation(AvatarIKGoal.RightHand, _weaponHandle.rotation);
 
-           // Debug.Log(stateInfo.normalizedTime);
+            
 
-            if (stateInfo.normalizedTime >= 0.4971169f)
+            Debug.Log(stateInfo.normalizedTime);
+
+            if (stateInfo.normalizedTime >= 0.45f)
             {
-                WeaponHandle.parent = RightHand.transform;
+                _weaponHandle.parent = _rightHand.transform;
+                _actionC.IsSwordInHand = true;
+
+                _ac = new AnimationController(animator);
+                _ac.UseSwordLocomotionAnimation(_actionC.IsSwordInHand);
             }
-            //check time normalized time
-            //
         }
     }
 }
