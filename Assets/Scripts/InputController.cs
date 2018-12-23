@@ -2,6 +2,19 @@
 
 public class InputController {
 
+    private static InputController _instance;
+
+    public static InputController Instance()
+    {
+        if (_instance == null)
+        {
+            _instance = new InputController();
+        }
+
+        return _instance;
+    }
+
+    private InputController(){}
     /*
      *  All the input from the controllers are coded in this file
      */

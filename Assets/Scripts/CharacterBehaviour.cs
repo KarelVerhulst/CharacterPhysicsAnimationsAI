@@ -42,7 +42,7 @@ public class CharacterBehaviour : MonoBehaviour
     Vector3 currentCenter;
 
     //externe scripts
-    private InputController _ic = new InputController();
+    private InputController _ic = InputController.Instance();
     private AnimationController _ac;
     private HeadTrigger _headTrigger;
 

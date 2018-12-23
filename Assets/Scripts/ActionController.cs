@@ -20,7 +20,7 @@ public class ActionController : MonoBehaviour {
 
     private Animator _animator;
     
-    private InputController _ic = new InputController();
+    private InputController _ic = InputController.Instance();
     private AnimationController _ac;
 
     private bool _isCharacterInTriggerBox = false;

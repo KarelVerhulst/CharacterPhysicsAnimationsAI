@@ -23,7 +23,7 @@ public class ThirdPersonCamera : MonoBehaviour {
     private Vector2 _rotationLimit = new Vector2(-20, 40);
 
     //Input Controller
-    private InputController _ic = new InputController();
+    private InputController _ic = InputController.Instance();
     private AnimationController _ac;
 
     // Use this for initialization
