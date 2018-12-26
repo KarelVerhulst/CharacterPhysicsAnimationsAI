@@ -4,26 +4,28 @@ using UnityEngine;
 
 public class PickUpSword : StateMachineBehaviour {
 
-    [SerializeField]
-    private Transform _weaponHandle;
-    [SerializeField]
     private Transform _rightHand;
-
     private AnimationController _ac;
-    private ActionController _actionC;
+    private SwordAction _actionC;
+    private GameObject _sword;
+    private SwordController _sc;
+    private float _iKWeight;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        _weaponHandle = GameObject.Find("SwordGrabHandle").transform;
+        _iKWeight = 0;
         _rightHand = GameObject.Find("mixamorig:RightHand").transform;
-        _actionC = new ActionController();
+        _actionC = SwordAction.Instance();
+        _sword = GameObject.Find("Sword");
+        _sc = _sword.GetComponent<SwordController>();
     }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-    //
-    //}
+    //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        _sc = _sword.GetComponent<SwordController>();
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -38,25 +40,28 @@ public class PickUpSword : StateMachineBehaviour {
     // OnStateIK is called right after Animator.OnAnimatorIK(). Code that sets up animation IK (inverse kinematics) should be implemented here.
     override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (_weaponHandle != null)
+        //before taking sword
+        if (stateInfo.normalizedTime < .4f)
+            _iKWeight = Mathf.Lerp(_iKWeight, 1, .5f);
+        else
         {
-            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-            animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-            animator.SetIKPosition(AvatarIKGoal.RightHand, _weaponHandle.position);
-            animator.SetIKRotation(AvatarIKGoal.RightHand, _weaponHandle.rotation);
-
-            
-
-            Debug.Log(stateInfo.normalizedTime);
-
-            if (stateInfo.normalizedTime >= 0.45f)
+            //take the sword
+            if (stateInfo.normalizedTime < .9f)
             {
-                _weaponHandle.parent = _rightHand.transform;
+                _sc.TakeSword(_rightHand);
                 _actionC.IsSwordInHand = true;
-
-                _ac = new AnimationController(animator);
-                _ac.UseSwordLocomotionAnimation(_actionC.IsSwordInHand);
             }
+            // use the correct animation
+            _ac = new AnimationController(animator);
+            _ac.UseSwordLocomotionAnimation(_actionC.IsSwordInHand);
+            
+            _iKWeight = Mathf.Lerp(_iKWeight, 0, .5f);
         }
+
+        //IK
+        animator.SetIKPosition(AvatarIKGoal.RightHand, _sc.RightHand.position);
+        //animator.SetIKRotation(AvatarIKGoal.RightHand, _sc.RightHand.rotation); //-> hand doet raar als dit aanstaat
+        animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _iKWeight);
+        animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _iKWeight);
     }
 }
