@@ -8,7 +8,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log("Start");
+       // Debug.Log("Start");
         SetupRoot();
 
         StartCoroutine(RunTree());

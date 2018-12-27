@@ -9133,7 +9133,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rightHand: {fileID: 1725272807}
   _localSwordPosition: {x: 0.094, y: -0.04, z: 0.013}
-  _localSwordrRotation: {x: 0, y: -70, z: 0}
+  _localSwordRotation: {x: 0, y: -70, z: 0}
+  _animator: {fileID: 1989012025}
+  _localWeaponHolderPosition: {x: -0.03, y: 0.13, z: -0.15}
+  _localWeaponHolderRotation: {x: -1, y: 86, z: -87}
+  _weaponHolder: {fileID: 2138900504}
 --- !u!1 &1350215306
 GameObject:
   m_ObjectHideFlags: 0
@@ -10383,7 +10387,7 @@ GameObject:
   m_Layer: 0
   m_Name: Handle
   m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -12528,6 +12532,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2136845735}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &2138900504 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400124, guid: 1eec49468143c6548b3dc79730ad6695,
+    type: 3}
+  m_PrefabInternal: {fileID: 2049140407}
 --- !u!1 &2141947996
 GameObject:
   m_ObjectHideFlags: 0

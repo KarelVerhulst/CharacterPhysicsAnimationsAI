@@ -6,7 +6,6 @@ public class PickUpSword : StateMachineBehaviour {
 
     private Transform _rightHand;
     private AnimationController _ac;
-    private SwordAction _actionC;
     private GameObject _sword;
     private SwordController _sc;
     private float _iKWeight;
@@ -16,7 +15,6 @@ public class PickUpSword : StateMachineBehaviour {
     {
         _iKWeight = 0;
         _rightHand = GameObject.Find("mixamorig:RightHand").transform;
-        _actionC = SwordAction.Instance();
         _sword = GameObject.Find("Sword");
         _sc = _sword.GetComponent<SwordController>();
     }
@@ -49,11 +47,10 @@ public class PickUpSword : StateMachineBehaviour {
             if (stateInfo.normalizedTime < .9f)
             {
                 _sc.TakeSword(_rightHand);
-                _actionC.IsSwordInHand = true;
             }
             // use the correct animation
             _ac = new AnimationController(animator);
-            _ac.UseSwordLocomotionAnimation(_actionC.IsSwordInHand);
+            _ac.UseSwordLocomotionAnimation(_sc.IsSwordInHand);
             
             _iKWeight = Mathf.Lerp(_iKWeight, 0, .5f);
         }

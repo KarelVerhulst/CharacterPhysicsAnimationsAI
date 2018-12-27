@@ -55,6 +55,11 @@ public class InputController {
         return Input.GetButtonDown("Xbox_X");
     }
 
+    public bool IsButtonYPressed()
+    {
+        return Input.GetButtonDown("Xbox_Y");
+    }
+
     //this is a test if you don't have a controller
     public Vector3 KeyMove()
     {

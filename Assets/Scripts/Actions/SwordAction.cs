@@ -14,15 +14,14 @@ public class SwordAction : MonoBehaviour {
 
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
-
-    private int _smooth = 3;
+    
     private Transform _char;
 
     private static SwordAction _instance;
 
     //properties
 
-    public bool IsSwordInHand { get; set; }
+    //public bool IsSwordInHand { get; set; }
 
     public static SwordAction Instance()
     {
@@ -37,16 +36,20 @@ public class SwordAction : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        IsSwordInHand = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        
         if (_isCharacterInTriggerBox && _ic.IsButtonXPressed())
         {
+            _char.position = _posPlayerForAnimation.position;
+            _char.GetChild(2).rotation = Quaternion.Euler(Vector3.zero);
 
-            _char.position = Vector3.Lerp(_char.position, _posPlayerForAnimation.position, 1);
-            _char.GetChild(2).rotation = Quaternion.Euler(0,0,0);
+            
+
+            Debug.Log(_char.GetChild(0).transform.rotation);
+
             _ac.PickupObjectAnimation(true);
         }
         else
