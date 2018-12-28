@@ -38,6 +38,7 @@ public class SwordController : MonoBehaviour {
     
     private float _timer;
     private bool _isDisArmTrue;
+    private bool _setMeleeActive;
 
     // Use this for initialization
     void Start () {
@@ -114,13 +115,18 @@ public class SwordController : MonoBehaviour {
             _transform.localPosition = _localSwordPosition;
             _transform.localEulerAngles = _localSwordRotation;
         }
-        //else if (_transform.parent) // hierin kom je nooit
-        //{
-        //    Debug.Log("transform.parent");
-        //    _transform.localPosition = _localSwordPosition;
-        //    _transform.localEulerAngles = _localSwordRotation;
-        //}
-        
+
+
+        if (IsSwordInHand && _ic.IsButtonBPressed())
+        {
+            _setMeleeActive = true;
+        }
+        else
+        {
+            _setMeleeActive = false;
+        }
+
+        _ac.AttackMeleeAnimation(_setMeleeActive);
     }
 
     public void TakeSword(Transform parent)

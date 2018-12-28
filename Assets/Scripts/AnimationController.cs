@@ -21,7 +21,7 @@ public class AnimationController {
     private int _isSwordInHandParam = Animator.StringToHash("IsSwordInHand");
     private int _isWeaponArmedParam = Animator.StringToHash("IsWeaponArmed");
     private int _isSwordAtBackParam = Animator.StringToHash("IsSwordAtBack");
-
+    private int _isMeleeAttackParam = Animator.StringToHash("IsMeleeAttack");
 
 
     public void MoveAnimation(Vector3 movement)
@@ -63,5 +63,10 @@ public class AnimationController {
     public void TakeWeaponFromBack(bool isWeaponAtBack)
     {
         _animator.SetBool(_isSwordAtBackParam, isWeaponAtBack);
+    }
+
+    public void AttackMeleeAnimation(bool setActive)
+    {
+        _animator.SetBool(_isMeleeAttackParam, setActive);
     }
 }
