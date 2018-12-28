@@ -59,8 +59,6 @@ public class SwordController : MonoBehaviour {
             if (_ic.IsButtonYPressed())
             {
                 _ac.DisArmWeaponWeapon(true);
-                //IsSwordInHand = false;
-                //_isWeaponArmed = false;
                 _isDisArmTrue = true;
             }
         }
