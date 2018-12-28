@@ -21,9 +21,17 @@ public class SwordController : MonoBehaviour {
     private Vector3 _localWeaponHolderRotation;
     [SerializeField]
     private Transform _weaponHolder;
+    [SerializeField]
+    private Vector3 _localWeaponHandPosition;
+    [SerializeField]
+    private Vector3 _localWeaponHandRotation;
+    [SerializeField]
+    private Transform _handR;
 
     private Transform _transform;
     private bool _isWeaponArmed = true;
+    private bool _characterHaveSword;
+    private bool _isSwordAtBack;
 
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
@@ -41,43 +49,78 @@ public class SwordController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
 
-        if (_isDisArmTrue)
+        if (IsSwordInHand) //if this is true you can put your weapon at your back
         {
-            _timer += Time.deltaTime;
+            SetSwordAtCharactersBack();
 
-            if (_timer > 0.92f)
+            if (_isDisArmTrue)
             {
-                IsSwordInHand = false;
-                _isWeaponArmed = false;
+                _timer += Time.deltaTime;
+
+                if (_timer > 0.92f)
+                {
+                    _isWeaponArmed = false;
+                    IsSwordInHand = false;
+                }
+            }
+        }
+        else //there is no sword in hand
+        {
+            //check if there is a character has a sword
+            if (_characterHaveSword)
+            {
+                //you have a sword you can take it from you back (you know it is NOT in your hand)
+                TakeSwordFromBack();
+
+                if (!_isDisArmTrue)
+                {
+                    Debug.Log("Timer");
+                    _timer += Time.deltaTime;
+
+                    if (_timer > 0.92f)
+                    {
+                        _isWeaponArmed = true;
+                        IsSwordInHand = true;
+                        _isSwordAtBack = false;
+                    }
+                }
+            }
+            else
+            {
+                //the character has no sword so pick up a sword if you are in the trigger zone
             }
         }
 
-        if (IsSwordInHand)
+        //give sword the correct position and rotation on the character
+        if (!_isWeaponArmed)
         {
-            if (_ic.IsButtonYPressed())
-            {
-                _ac.DisArmWeaponWeapon(true);
-                _isDisArmTrue = true;
-            }
-        }
-        else if(!_isWeaponArmed)
-        {
-            _ac.DisArmWeaponWeapon(false);
-            _ac.UseSwordLocomotionAnimation(IsSwordInHand);
+            Debug.Log("false isweapon armed");
+            _ac.SetWeaponAtBack(false);
+            _ac.UseSwordLocomotionAnimation(false);
 
             _transform.parent = _weaponHolder;
             _transform.localPosition = _localWeaponHolderPosition;
             _transform.localEulerAngles = _localWeaponHolderRotation;
+
         }
-        
-        
-        if (_transform.parent && _isWeaponArmed)
+        else if (!_isSwordAtBack && _characterHaveSword)
         {
+            Debug.Log("take weapon animation + use sword locomotion");
+            _ac.TakeWeaponFromBack(false);
+            _ac.UseSwordLocomotionAnimation(true);
+
+            _transform.parent = _handR;
             _transform.localPosition = _localSwordPosition;
             _transform.localEulerAngles = _localSwordRotation;
         }
+        //else if (_transform.parent) // hierin kom je nooit
+        //{
+        //    Debug.Log("transform.parent");
+        //    _transform.localPosition = _localSwordPosition;
+        //    _transform.localEulerAngles = _localSwordRotation;
+        //}
+        
     }
 
     public void TakeSword(Transform parent)
@@ -86,5 +129,28 @@ public class SwordController : MonoBehaviour {
         _transform.localPosition = _localSwordPosition;
         _transform.localEulerAngles = _localSwordRotation;
         IsSwordInHand = true;
+        _characterHaveSword = true;
+    }
+
+    //private mehtods
+
+    private void SetSwordAtCharactersBack()
+    {
+        if (_ic.IsButtonYPressed())
+        {
+            _timer = 0;
+            _ac.SetWeaponAtBack(true);
+            _isDisArmTrue = true;
+        }
+    }
+
+    private void TakeSwordFromBack()
+    {
+        if (_ic.IsButtonYPressed())
+        {
+            _timer = 0;
+            _ac.TakeWeaponFromBack(true);
+            _isDisArmTrue = false;
+        }
     }
 }

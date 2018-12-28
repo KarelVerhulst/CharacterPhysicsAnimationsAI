@@ -3838,17 +3838,9 @@ MonoBehaviour:
     areaError: 15
   asset_guid: 
   dontDestroyMeshOnDelete: 0
-  m_selectedFaces: 04000000
-  m_SelectedEdges:
-  - x: 16
-    y: 17
-  - x: 18
-    y: 16
-  - x: 17
-    y: 19
-  - x: 19
-    y: 18
-  m_selectedTriangles: 100000001100000012000000110000001300000012000000
+  m_selectedFaces: 
+  m_SelectedEdges: []
+  m_selectedTriangles: 
 --- !u!33 &298061170
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7365,6 +7357,11 @@ Mesh:
   m_MeshMetrics[0]: 1
   m_MeshMetrics[1]: 1
   m_MeshOptimized: 0
+--- !u!4 &797124849 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400080, guid: 1eec49468143c6548b3dc79730ad6695,
+    type: 3}
+  m_PrefabInternal: {fileID: 2049140407}
 --- !u!1 &946150240
 GameObject:
   m_ObjectHideFlags: 0
@@ -9138,6 +9135,9 @@ MonoBehaviour:
   _localWeaponHolderPosition: {x: -0.03, y: 0.13, z: -0.15}
   _localWeaponHolderRotation: {x: -1, y: 86, z: -87}
   _weaponHolder: {fileID: 2138900504}
+  _localWeaponHandPosition: {x: 0.094, y: -0.04, z: 0.013}
+  _localWeaponHandRotation: {x: 0, y: -75, z: 0}
+  _handR: {fileID: 797124849}
 --- !u!1 &1350215306
 GameObject:
   m_ObjectHideFlags: 0
@@ -9546,13 +9546,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1372269432}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.1, z: -2.58}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.252, y: 0, z: 1.441}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2063081049}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1501937129
 GameObject:
   m_ObjectHideFlags: 0
@@ -9867,7 +9867,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh4362
+  m_Name: pb_Mesh4372
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -11696,7 +11696,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _posPlayerForAnimation: {fileID: 62058210}
-  _test: {fileID: 1372269433}
+  _test: {fileID: 1287416019}
+  _char: {fileID: 1989012022}
 --- !u!1 &2071787909
 GameObject:
   m_ObjectHideFlags: 0

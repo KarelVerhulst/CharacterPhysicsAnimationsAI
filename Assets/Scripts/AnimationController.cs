@@ -19,7 +19,8 @@ public class AnimationController {
     private int _horizontalRotationParam = Animator.StringToHash("HorizontalRotation");
     private int _isPickUpObjectParam = Animator.StringToHash("IsPickUpObject");
     private int _isSwordInHandParam = Animator.StringToHash("IsSwordInHand");
-    private int _IsWeaponArmedParam = Animator.StringToHash("IsWeaponArmed");
+    private int _isWeaponArmedParam = Animator.StringToHash("IsWeaponArmed");
+    private int _isSwordAtBackParam = Animator.StringToHash("IsSwordAtBack");
 
 
 
@@ -54,8 +55,13 @@ public class AnimationController {
         _animator.SetBool(_isPickUpObjectParam, isPickup);
     }
 
-    public void DisArmWeaponWeapon(bool isDisarm)
+    public void SetWeaponAtBack(bool isDisarm)
     {
-        _animator.SetBool(_IsWeaponArmedParam, isDisarm);
+        _animator.SetBool(_isWeaponArmedParam, isDisarm);
+    }
+
+    public void TakeWeaponFromBack(bool isWeaponAtBack)
+    {
+        _animator.SetBool(_isSwordAtBackParam, isWeaponAtBack);
     }
 }
