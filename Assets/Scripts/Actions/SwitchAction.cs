@@ -2,59 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwordAction : MonoBehaviour {
+public class SwitchAction : MonoBehaviour {
 
     [SerializeField]
-    private Transform _posPlayerForAnimation;
-    [SerializeField]
-    private Transform _test;
-    [SerializeField]
-    private Transform _char;
-
-    private bool _isCharacterInTriggerBox = false;
-    private int _playerLayer = 9;
-
     private Animator _animator;
+    [SerializeField]
+    private List<Transform> _gates = new List<Transform>();
+
+    private int _playerLayer = 9;
+    private bool _isCharacterInTriggerBox;
 
     private InputController _ic = InputController.Instance();
-    private static SwordAction _instance;
     private AnimationController _ac;
     
-
-    public static SwordAction Instance()
-    {
-        if (_instance == null)
-        {
-            _instance = new SwordAction();
-        }
-
-        return _instance;
-    }
-    
-
     // Use this for initialization
     void Start () {
-        _animator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
-    }
+	}
 	
 	// Update is called once per frame
 	void Update () {
-
+        
         if (_isCharacterInTriggerBox && _ic.IsButtonXPressed())
         {
-            _char.position = _posPlayerForAnimation.position;
-            _char.rotation = Quaternion.Euler(Vector3.zero);
-
-            _ac.PickupObjectAnimation(true);
+            _ac.PushButtonAnimation(true);
         }
         else
         {
-            
-            if (_ac != null)
-            {
-                _ac.PickupObjectAnimation(false);
-            }
+            _ac.PushButtonAnimation(false);
         }
     }
 
@@ -71,6 +46,26 @@ public class SwordAction : MonoBehaviour {
         if (other.gameObject.layer == _playerLayer)
         {
             _isCharacterInTriggerBox = false;
+        }
+    }
+    
+    public void OpenCloseGates(bool isClosed)
+    {
+        if (isClosed)
+        {
+            // Debug.Log("Open all the gates");
+            foreach (Transform gate in _gates)
+            {
+                gate.position = Vector3.Lerp(gate.position, new Vector3(gate.position.x, 1, gate.position.z), 1f);
+            }
+        }
+        else
+        {
+            //Debug.Log("Close all the gates");
+            foreach (Transform gate in _gates)
+            {
+                gate.position = Vector3.Lerp(gate.position, new Vector3(gate.position.x, 2.7f, gate.position.z), 1f);
+            }
         }
     }
 }

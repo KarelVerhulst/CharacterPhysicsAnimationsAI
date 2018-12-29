@@ -22,10 +22,6 @@ public class SwordController : MonoBehaviour {
     [SerializeField]
     private Transform _weaponHolder;
     [SerializeField]
-    private Vector3 _localWeaponHandPosition;
-    [SerializeField]
-    private Vector3 _localWeaponHandRotation;
-    [SerializeField]
     private Transform _handR;
 
     private Transform _transform;

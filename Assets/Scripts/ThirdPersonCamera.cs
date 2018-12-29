@@ -15,9 +15,9 @@ public class ThirdPersonCamera : MonoBehaviour {
     [SerializeField]
     private float _cameraSpeed = 50f;
     [SerializeField]
-    private Transform CharacterPos;
+    private Transform _characterPos;
     [SerializeField]
-    private Transform Character;
+    private CharacterController _characterController;
 
     private Vector3 _v3Rotate = Vector3.zero;
     private Vector2 _rotationLimit = new Vector2(-20, 40);
@@ -33,15 +33,14 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        //rotate camera horizontal
-        _v3Rotate.y += _ic.GetRightJoystickInput().x * _cameraSpeed * Time.deltaTime;
-        Character.transform.Rotate(Vector3.up, _ic.GetRightJoystickInput().x * _cameraSpeed * Time.deltaTime);
-
+        //rotate camera and character horizontal
+        _characterController.transform.eulerAngles += new Vector3(0, _ic.GetRightJoystickInput().x,0) * _cameraSpeed * Time.deltaTime;
+        
         //rotate camera vertical with a limit
         _v3Rotate.x += _ic.GetRightJoystickInput().y * _cameraSpeed * Time.deltaTime;
         _v3Rotate.x = Mathf.Clamp(_v3Rotate.x, _rotationLimit.x, _rotationLimit.y);
 
-        CharacterPos.transform.localEulerAngles = _v3Rotate;
+        _characterPos.transform.localEulerAngles = _v3Rotate;
 
         //animation
         /*
@@ -51,6 +50,6 @@ public class ThirdPersonCamera : MonoBehaviour {
          *     problem: rotatie animatie gaat veel te traag in vergelijking met de snelheid van de camera
          *              de snelheid van de animatie wordt in de blend tree niet aangepast ook al is de snelheid meer dan 1
          */
-        //_ac.RotateCameraAnimation(_v3Rotate.y);
+        //_ac.RotateCameraAnimation(_characterController.transform.position.y);
     }
 }
