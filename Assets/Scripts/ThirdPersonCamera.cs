@@ -50,6 +50,6 @@ public class ThirdPersonCamera : MonoBehaviour {
          *     problem: rotatie animatie gaat veel te traag in vergelijking met de snelheid van de camera
          *              de snelheid van de animatie wordt in de blend tree niet aangepast ook al is de snelheid meer dan 1
          */
-        //_ac.RotateCameraAnimation(_characterController.transform.position.y);
+            _ac.RotateCameraAnimation(_ic.GetRightJoystickInput().x);
     }
 }
