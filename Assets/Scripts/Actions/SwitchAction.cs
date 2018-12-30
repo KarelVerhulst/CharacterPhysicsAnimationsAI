@@ -7,7 +7,7 @@ public class SwitchAction : MonoBehaviour {
     [SerializeField]
     private Animator _animator;
     [SerializeField]
-    private List<Transform> _gates = new List<Transform>();
+    private List<Animation> _gates = new List<Animation>();
 
     private int _playerLayer = 9;
     private bool _isCharacterInTriggerBox;
@@ -54,17 +54,19 @@ public class SwitchAction : MonoBehaviour {
         if (isClosed)
         {
             // Debug.Log("Open all the gates");
-            foreach (Transform gate in _gates)
+            foreach (Animation gate in _gates)
             {
-                gate.position = Vector3.Lerp(gate.position, new Vector3(gate.position.x, 1, gate.position.z), 1f);
+                gate.Play("GateOpen");
+                gate.gameObject.GetComponent<BoxCollider>().enabled = false;
             }
         }
         else
         {
             //Debug.Log("Close all the gates");
-            foreach (Transform gate in _gates)
+            foreach (Animation gate in _gates)
             {
-                gate.position = Vector3.Lerp(gate.position, new Vector3(gate.position.x, 2.7f, gate.position.z), 1f);
+                gate.Play("GateClose");
+                gate.gameObject.GetComponent<BoxCollider>().enabled = true;
             }
         }
     }

@@ -72,7 +72,6 @@ public class SwordController : MonoBehaviour {
 
                 if (!_isDisArmTrue)
                 {
-                    Debug.Log("Timer");
                     _timer += Time.deltaTime;
 
                     if (_timer > 0.92f)
@@ -92,7 +91,7 @@ public class SwordController : MonoBehaviour {
         //give sword the correct position and rotation on the character
         if (!_isWeaponArmed)
         {
-            Debug.Log("false isweapon armed");
+            //Debug.Log("false isweapon armed");
             _ac.SetWeaponAtBack(false);
             _ac.UseSwordLocomotionAnimation(false);
 
@@ -103,7 +102,7 @@ public class SwordController : MonoBehaviour {
         }
         else if (!_isSwordAtBack && _characterHaveSword)
         {
-            Debug.Log("take weapon animation + use sword locomotion");
+            //Debug.Log("take weapon animation + use sword locomotion");
             _ac.TakeWeaponFromBack(false);
             _ac.UseSwordLocomotionAnimation(true);
 
