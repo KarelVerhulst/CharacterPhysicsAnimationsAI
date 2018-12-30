@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 47fa9f70ee638b64db827cac92046728
+guid: 3284d8cfd932b6b4ca755895e2e51d80
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -139,7 +139,8 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: Right Turn
+    7400000: Push
+    7400002: Push First Stage
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -170,10 +171,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Right Turn
+      name: Push
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 50
+      lastFrame: 51
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -23,6 +23,7 @@ public class AnimationController {
     private int _isSwordAtBackParam = Animator.StringToHash("IsSwordAtBack");
     private int _isMeleeAttackParam = Animator.StringToHash("IsMeleeAttack");
     private int _isSwitchingButtonParam = Animator.StringToHash("IsSwitchingButton");
+    private int _IsPushingParam = Animator.StringToHash("IsPushing");
 
     public void MoveAnimation(Vector3 movement)
     {
@@ -73,5 +74,10 @@ public class AnimationController {
     public void PushButtonAnimation(bool isButtonPushed)
     {
         _animator.SetBool(_isSwitchingButtonParam, isButtonPushed);
+    }
+
+    public void PushboxAnimation(bool isPushing)
+    {
+        _animator.SetBool(_IsPushingParam, isPushing);
     }
 }

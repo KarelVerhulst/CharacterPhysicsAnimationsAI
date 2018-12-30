@@ -155,7 +155,7 @@ public class CharacterBehaviour : MonoBehaviour
     private void DoMovement()
     {
         Vector3 displacement = _velocity  * Time.deltaTime;
-
+        
         _characterController.Move(displacement);
     }
 
@@ -236,6 +236,14 @@ public class CharacterBehaviour : MonoBehaviour
         {
             _velocity.x = 0;
             _velocity.z = 0;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "Cube" && _ic.IsButtonXPressed())
+        {
+            Debug.Log("trigger cue");
         }
     }
 }
