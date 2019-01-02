@@ -37,9 +37,11 @@ public class CharacterBehaviour : MonoBehaviour
     private bool _jump;
     private bool _isJumping;
     private bool _isCrouch;
+    private AnimatorStateInfo _aStateInfo;
 
     float currentHeight;
     Vector3 currentCenter;
+    
 
     //externe scripts
     private InputController _ic = InputController.Instance();
@@ -61,6 +63,9 @@ public class CharacterBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
+            return;
+
         //_movement = _ic.KeyMove();
         _movement = _ic.GetLeftJoystickInput();
                 

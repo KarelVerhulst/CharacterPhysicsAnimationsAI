@@ -21,8 +21,6 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     private Vector3 _v3Rotate = Vector3.zero;
     private Vector2 _rotationLimit = new Vector2(-20, 40);
-
-    //Input Controller
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
 
@@ -33,6 +31,13 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
+        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
+            return;
+            
+
+
+
         //rotate camera and character horizontal
         _characterController.transform.eulerAngles += new Vector3(0, _ic.GetRightJoystickInput().x,0) * _cameraSpeed * Time.deltaTime;
         

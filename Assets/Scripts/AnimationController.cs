@@ -80,4 +80,9 @@ public class AnimationController {
     {
         _animator.SetBool(_IsPushingParam, isPushing);
     }
+
+    public bool CheckIfAnimationIsPlaying(string animationName)
+    {
+        return _animator.GetCurrentAnimatorStateInfo(0).IsName(animationName);
+    }
 }
