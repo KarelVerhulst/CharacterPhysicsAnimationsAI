@@ -243,12 +243,4 @@ public class CharacterBehaviour : MonoBehaviour
             _velocity.z = 0;
         }
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.name == "Cube" && _ic.IsButtonXPressed())
-        {
-            Debug.Log("trigger cue");
-        }
-    }
 }

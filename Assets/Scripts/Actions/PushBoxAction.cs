@@ -5,69 +5,96 @@ using UnityEngine;
 public class PushBoxAction : MonoBehaviour {
 
     [SerializeField]
-    private CheckColliderTrigger _cct;
-    [SerializeField]
     private Animator _animator;
+    [SerializeField]
+    private CharacterController _charController;
 
     private AnimationController _ac;
     private InputController _ic = InputController.Instance();
 
     private bool _isPushing;
+    [SerializeField]
+    private float _pushPower = 2.5f;
 
-    float pushPower = 2.0f;
+    private Vector3 _currentCharControllerCenter;
+    private bool _isCharacterInTrigger;
+    private bool _canBoxMove;
+    private int _pushBoxLayer = 10;
 
     // Use this for initialization
     void Start () {
         _ac = new AnimationController(_animator);
+        _currentCharControllerCenter = _charController.center;
     }
     
 
     // Update is called once per frame
     void Update () {
-        if (_cct.IsTriggerActive && _ic.IsButtonXPressed())
+        if (_isCharacterInTrigger && _ic.IsButtonXPressed())
         {
             _isPushing = true;
+            _canBoxMove = true;
+            _charController.center = new Vector3(0,1,0.6f);
         }
 
-        if (!_cct.IsTriggerActive)
+        if (!_isCharacterInTrigger)
         {
             _isPushing = false;
+            _canBoxMove = false;
         }
-        Debug.Log(_isPushing);
 
         _ac.PushboxAnimation(_isPushing);
     }
 
+   
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == _pushBoxLayer)
+        {
+            _isCharacterInTrigger = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == _pushBoxLayer)
+        {
+            _isCharacterInTrigger = false;
+            _charController.center = _currentCharControllerCenter;
+        }
+    }
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (_isPushing && hit.gameObject.name == "Cube")
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        // no rigidbody
+        if (body == null || body.isKinematic)
         {
-            Debug.Log(hit.gameObject.name);
+            return;
+        }
 
-            Rigidbody body = hit.collider.attachedRigidbody;
+        // We dont want to push objects below us
+        if (hit.moveDirection.y < -0.3)
+        {
+            return;
+        }
 
-            // no rigidbody
-            if (body == null || body.isKinematic)
-            {
-                return;
-            }
+        // Calculate push direction from move direction,
+        // we only push objects to the sides never up and down
+        Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
 
-            // We dont want to push objects below us
-            if (hit.moveDirection.y < -0.3)
-            {
-                return;
-            }
+        // If you know how fast your character is trying to move,
+        // then you can also multiply the push velocity by that.
 
-            // Calculate push direction from move direction,
-            // we only push objects to the sides never up and down
-            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
-
-            // If you know how fast your character is trying to move,
-            // then you can also multiply the push velocity by that.
-
-            // Apply the push
-            body.velocity = pushDir * pushPower;
+        // Apply the push
+        if (_canBoxMove)
+        {
+            //body.velocity = pushDir * 2.0f;
+            body.AddForce(pushDir * _pushPower, ForceMode.Impulse);
         }
 
     }
+
 }

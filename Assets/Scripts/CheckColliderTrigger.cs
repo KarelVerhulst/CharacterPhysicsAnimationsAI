@@ -16,15 +16,21 @@ public class CheckColliderTrigger : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (IsTriggerActive)
+        {
+            this.GetComponentInParent<Rigidbody>().isKinematic = false;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == _layerPlayer)
         {
             IsTriggerActive = true;
-            Debug.Log("player stand before a box");
+        }
+        else
+        {
+            this.GetComponentInParent<Rigidbody>().isKinematic = true;
         }
     }
 
@@ -33,7 +39,7 @@ public class CheckColliderTrigger : MonoBehaviour {
         if (other.gameObject.layer == _layerPlayer)
         {
             IsTriggerActive = false;
-            Debug.Log("player stand before a box");
+            this.GetComponentInParent<Rigidbody>().isKinematic = true;
         }
     }
 }
