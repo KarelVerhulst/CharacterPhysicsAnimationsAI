@@ -9,7 +9,7 @@ public class SelectorNode : CompositeNode
 {
 
 
-    public SelectorNode(params INode[] nodes)
+    public SelectorNode(params INode[] nodes):base (nodes)
     {
   
     }

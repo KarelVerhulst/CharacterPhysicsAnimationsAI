@@ -5,25 +5,26 @@ using UnityEngine;
 public class PushBoxAction : MonoBehaviour {
 
     [SerializeField]
+    private float _pushPower;
+    
     private Animator _animator;
-    [SerializeField]
     private CharacterController _charController;
+    private Vector3 _currentCharControllerCenter;
+
+    private bool _isCharacterInTrigger;
+    private bool _canBoxMove;
+    private int _pushBoxLayer = 10;
+    private bool _isPushing;
 
     private AnimationController _ac;
     private InputController _ic = InputController.Instance();
 
-    private bool _isPushing;
-    [SerializeField]
-    private float _pushPower = 2.5f;
-
-    private Vector3 _currentCharControllerCenter;
-    private bool _isCharacterInTrigger;
-    private bool _canBoxMove;
-    private int _pushBoxLayer = 10;
-
     // Use this for initialization
     void Start () {
+        _animator = this.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
+        _charController = this.GetComponent<CharacterController>();
+
         _currentCharControllerCenter = _charController.center;
     }
     
