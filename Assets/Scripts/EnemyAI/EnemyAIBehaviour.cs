@@ -6,30 +6,53 @@ using UnityEngine.AI;
 public class EnemyAIBehaviour : MonoBehaviour {
 
     [SerializeField]
+    private Transform _character;
+    [SerializeField]
     private Transform[] _waypoints;
-    
+
+    //field of view
+    [SerializeField]
+    private Transform _startPos;
+    [SerializeField]
+    private float _fieldOfView = 2.0f;
+    [SerializeField]
+    private float _fieldOfViewDistance = 15.0f;
+
+
+    //other
     private INode _rootNode;
     private NavMeshAgent _npc;
     private Animator _animator;
 
-    private float _timer;
+    private AnimationController _ac;
+    
     private int destPoint;
+
+    //stay for x time at a point
+    private float _timer;
+    private float _standDefault = 5.0f;
+    
 
     // Use this for initialization
     void Start () {
         _npc = this.GetComponent<NavMeshAgent>();
         _animator = this.GetComponent<Animator>();
-
+        _ac = new AnimationController(_animator);
+        _timer = _standDefault;
         destPoint = Random.Range(0, _waypoints.Length - 1);
-        _timer = 5;
+        this.transform.position = _waypoints[destPoint].position;
+
+        Debug.Log(destPoint);
 
         SetupRoot();
 
         StartCoroutine(RunTree());
-	}
+    }
 	
 	// Update is called once per frame
-	void Update () {}
+	void Update () {
+        NPCFieldOfView();
+    }
 
     IEnumerator RunTree()
     {
@@ -43,9 +66,9 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private void SetupRoot()
     {
         _rootNode = new SelectorNode(
-                LookForCharacter(),
+                //LookForCharacter(),
                 StareAtPoint(),
-                IdleAtPoint(),
+                //IdleAtPoint(),
                 NPCAction()
             );
     }
@@ -67,7 +90,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
                 new ActionNode(Fight)
             );
     }
-    
+
     private INode StareAtPoint()
     {
         return new SequenceNode(
@@ -86,7 +109,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private INode NPCAction()
     {
-        Debug.Log("npc action");
+        //Debug.Log("npc action");
         return new SequenceNode(
                 new ConditionNode(IsTimerReset),
                 new ActionNode(WalkToNextPoint)
@@ -105,8 +128,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Conditions
     private bool IsCharacterInRange()
     {
-        //return true;
-        return Random.Range(0, 1) > 0.3;
+        return true; // go to focus
     }
 
     private bool IsCloseToCharacter()
@@ -117,26 +139,67 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private bool IsNpcAtPoint()
     {
-        //return true;
-        return Random.Range(0, 1) > 0.3;
+        if (_npc.remainingDistance < 0.1f)
+        {
+            _npc.transform.position = _waypoints[destPoint].position;
+            _timer -= Time.deltaTime;
+            _ac.WalkAnimation(false);
+
+            if (_timer <= 0)
+            {
+                _timer = _standDefault;
+                destPoint = (destPoint + 1) % _waypoints.Length;
+                //int curDestPoint = destPoint;
+                //destPoint = Random.Range(0, _waypoints.Length - 1);
+                //if (curDestPoint == destPoint)
+                //{
+                //    destPoint = Random.Range(0, _waypoints.Length - 1);
+                //}
+               
+                return false;
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private bool IsTimerRunning()
     {
-        //return true;
-        return Random.Range(0, 1) > 0.3;
+       // Debug.Log("timer is running");
+
+        //if (_npc.destination.x == _waypoints[destPoint].position.x)
+        //{
+        //    _npc.destination = _waypoints[destPoint].position;
+        //    _timer -= Time.deltaTime;
+
+        //    //Debug.Log(_timer);
+        //    //if (_timer <= 0)
+        //    //{
+        //    //    return false;
+        //    //}
+        //}
+
+        //if (_timer <= 0)
+        //{
+        //    return false;
+        //}
+
+        return true;
     }
 
     private bool IsTimerReset()
     {
-        _timer -= Time.deltaTime;
-       
-        //return true;
-        if (_timer <= 0)
+        
+        if (_npc.pathEndPosition.x != _waypoints[destPoint].position.x)
         {
-            _timer = 5;
+            
             return true;
         }
+        
 
         return false;
     }
@@ -145,7 +208,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private IEnumerator<NodeResult> Focus()
     {
         Debug.Log("Focus");
-        yield return NodeResult.Success;
+        yield return NodeResult.Success; //go to walk to character
     }
 
     private IEnumerator<NodeResult> WalkToCharacter()
@@ -162,7 +225,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private IEnumerator<NodeResult> Stare()
     {
-        Debug.Log("Stare");
+        //Debug.Log("Stare add animation that rotate");
         yield return NodeResult.Success;
     }
 
@@ -174,25 +237,18 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private IEnumerator<NodeResult> WalkToNextPoint()
     {
-        Debug.Log("WalkToNextPoint");
-        GotoNextPoint();
-
+        Debug.Log("walk to next point");
+        _ac.WalkAnimation(true);
+        _npc.destination = _waypoints[destPoint].position;
 
         yield return NodeResult.Success;
     }
 
-    
-    private void GotoNextPoint()
+    private void NPCFieldOfView()
     {
-        // Returns if no points have been set up
-        if (_waypoints.Length == 0)
-            return;
-        
-        // Set the agent to go to the currently selected destination.
-        _npc.destination = _waypoints[destPoint].position;
+        Debug.DrawRay(_startPos.position, _startPos.forward * _fieldOfViewDistance, Color.white);
+        Debug.DrawRay(_startPos.position, (_startPos.forward + _startPos.right).normalized * _fieldOfViewDistance, Color.black);
+        Debug.DrawRay(_startPos.position, (_startPos.forward - _startPos.right).normalized * _fieldOfViewDistance, Color.black);
 
-        // Choose the next point in the array as the destination,
-        // cycling to the start if necessary.
-        destPoint = (destPoint + 1) % _waypoints.Length;
     }
 }

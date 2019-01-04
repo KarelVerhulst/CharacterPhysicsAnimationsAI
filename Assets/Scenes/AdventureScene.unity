@@ -7808,6 +7808,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 931027772}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &939712573 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400004, guid: 1eec49468143c6548b3dc79730ad6695,
+    type: 3}
+  m_PrefabInternal: {fileID: 1993618655}
 --- !u!1 &973900019
 GameObject:
   m_ObjectHideFlags: 0
@@ -11165,6 +11170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 515fcde652cf8e44ca869e5f688fbb34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _character: {fileID: 0}
   _waypoints:
   - {fileID: 2000842363}
   - {fileID: 1622328811}
@@ -11173,6 +11179,9 @@ MonoBehaviour:
   - {fileID: 417456343}
   - {fileID: 2020104579}
   - {fileID: 802026089}
+  _startPos: {fileID: 939712573}
+  _fieldOfView: 2
+  _fieldOfViewDistance: 5
 --- !u!4 &1804693256
 Transform:
   m_ObjectHideFlags: 0
@@ -11196,7 +11205,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
