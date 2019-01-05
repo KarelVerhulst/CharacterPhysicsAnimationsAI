@@ -9,6 +9,8 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private Transform _character;
     [SerializeField]
     private Transform[] _waypoints;
+    [SerializeField]
+    private Transform _lookAtPosition;
 
     //field of view
     [SerializeField]
@@ -26,11 +28,11 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private AnimationController _ac;
     
-    private int destPoint;
+    private int _destPoint;
 
     //stay for x time at a point
     private float _timer;
-    private float _standDefault = 5.0f;
+    private float _standDefault = 10.0f;
     
 
     // Use this for initialization
@@ -39,11 +41,8 @@ public class EnemyAIBehaviour : MonoBehaviour {
         _animator = this.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
         _timer = _standDefault;
-        destPoint = Random.Range(0, _waypoints.Length - 1);
-        this.transform.position = _waypoints[destPoint].position;
-
-        Debug.Log(destPoint);
-
+        _destPoint = Random.Range(0, _waypoints.Length - 1);
+        
         SetupRoot();
 
         StartCoroutine(RunTree());
@@ -68,7 +67,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
         _rootNode = new SelectorNode(
                 //LookForCharacter(),
                 StareAtPoint(),
-                //IdleAtPoint(),
+                IdleAtPoint(),
                 NPCAction()
             );
     }
@@ -141,14 +140,15 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         if (_npc.remainingDistance < 0.1f)
         {
-            _npc.transform.position = _waypoints[destPoint].position;
+            _npc.transform.position = _waypoints[_destPoint].position;
             _timer -= Time.deltaTime;
             _ac.WalkAnimation(false);
+            _ac.LookAroundAnimation(true);
 
-            if (_timer <= 0)
+            if (_timer <= 5.0f)
             {
-                _timer = _standDefault;
-                destPoint = (destPoint + 1) % _waypoints.Length;
+                //_timer = _standDefault;
+                //destPoint = (destPoint + 1) % _waypoints.Length;
                 //int curDestPoint = destPoint;
                 //destPoint = Random.Range(0, _waypoints.Length - 1);
                 //if (curDestPoint == destPoint)
@@ -169,37 +169,30 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private bool IsTimerRunning()
     {
-       // Debug.Log("timer is running");
+        if (_timer <= 0f)
+        {
+            _timer = _standDefault;
+            _destPoint = (_destPoint + 1) % _waypoints.Length;
 
-        //if (_npc.destination.x == _waypoints[destPoint].position.x)
-        //{
-        //    _npc.destination = _waypoints[destPoint].position;
-        //    _timer -= Time.deltaTime;
-
-        //    //Debug.Log(_timer);
-        //    //if (_timer <= 0)
-        //    //{
-        //    //    return false;
-        //    //}
-        //}
-
-        //if (_timer <= 0)
-        //{
-        //    return false;
-        //}
-
-        return true;
+            return false;
+        }
+        else if(_npc.remainingDistance < 0.1f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
     }
 
     private bool IsTimerReset()
     {
-        
-        if (_npc.pathEndPosition.x != _waypoints[destPoint].position.x)
+        if (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x && _timer == _standDefault) 
         {
-            
             return true;
         }
-        
 
         return false;
     }
@@ -226,20 +219,28 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private IEnumerator<NodeResult> Stare()
     {
         //Debug.Log("Stare add animation that rotate");
+        //rotate the npc so he idle with his face to the playfield and not agains the wall
+        if (_destPoint == 0 || _destPoint == 4 || _destPoint == 6)
+        {
+            Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _lookAtPosition.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
+            this.transform.rotation = Quaternion.LookRotation(newDirection);
+        }
+
         yield return NodeResult.Success;
     }
 
     private IEnumerator<NodeResult> Idle()
     {
-        Debug.Log("Idle");
+        //Debug.Log("Idle");
+        _ac.LookAroundAnimation(false);
         yield return NodeResult.Success;
     }
 
     private IEnumerator<NodeResult> WalkToNextPoint()
     {
-        Debug.Log("walk to next point");
+        //Debug.Log("walk to next point");
         _ac.WalkAnimation(true);
-        _npc.destination = _waypoints[destPoint].position;
+        _npc.destination = _waypoints[_destPoint].position;
 
         yield return NodeResult.Success;
     }

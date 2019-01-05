@@ -24,7 +24,10 @@ public class AnimationController {
     private int _isMeleeAttackParam = Animator.StringToHash("IsMeleeAttack");
     private int _isSwitchingButtonParam = Animator.StringToHash("IsSwitchingButton");
     private int _isPushingParam = Animator.StringToHash("IsPushing");
+    // nps animation params
     private int _isWalkingParam = Animator.StringToHash("IsWalking");
+    private int _isLookingAroundParam = Animator.StringToHash("IsLookingAround");
+
 
     public void MoveAnimation(Vector3 movement)
     {
@@ -90,5 +93,10 @@ public class AnimationController {
     public void WalkAnimation(bool isWalking)
     {
         _animator.SetBool(_isWalkingParam, isWalking);
+    }
+
+    public void LookAroundAnimation(bool isLookAround)
+    {
+        _animator.SetBool(_isLookingAroundParam, isLookAround);
     }
 }
