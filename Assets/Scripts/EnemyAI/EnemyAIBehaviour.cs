@@ -29,11 +29,17 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private AnimationController _ac;
     
     private int _destPoint;
+    private float _walkingspeed = (5.0f * 1000) / (60 * 60); //https://en.wikipedia.org/wiki/Preferred_walking_speed
 
     //stay for x time at a point
     private float _timer;
     private float _standDefault = 10.0f;
-    
+
+    //test
+    public float maxAngle;
+    public float maxRadius;
+
+    private bool isInFov = false;
 
     // Use this for initialization
     void Start () {
@@ -47,10 +53,12 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         StartCoroutine(RunTree());
     }
-	
-	// Update is called once per frame
-	void Update () {
-        NPCFieldOfView();
+    
+    // Update is called once per frame
+    void Update () {
+       // isInFov = inFOV(transform, _character, maxAngle, maxRadius);
+        
+        //NPCFieldOfView();
     }
 
     IEnumerator RunTree()
@@ -65,7 +73,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private void SetupRoot()
     {
         _rootNode = new SelectorNode(
-                //LookForCharacter(),
+                LookForCharacter(),
                 StareAtPoint(),
                 IdleAtPoint(),
                 NPCAction()
@@ -118,6 +126,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Selectors
     private INode NPCActionWithCharacter()
     {
+        Debug.Log("NPCActionWithCharacter");
         return new SelectorNode(
                 FightCharacter(),
                 new ActionNode(WalkToCharacter)
@@ -127,7 +136,18 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Conditions
     private bool IsCharacterInRange()
     {
-        return true; // go to focus
+        isInFov = inFOV(transform, _character, maxAngle, maxRadius);
+
+        if (isInFov)
+        {
+            Debug.Log("focus on character");
+            return true;
+        }
+        else
+        {
+            Debug.Log("go to next node");
+            return false;
+        }
     }
 
     private bool IsCloseToCharacter()
@@ -146,16 +166,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
             _ac.LookAroundAnimation(true);
 
             if (_timer <= 5.0f)
-            {
-                //_timer = _standDefault;
-                //destPoint = (destPoint + 1) % _waypoints.Length;
-                //int curDestPoint = destPoint;
-                //destPoint = Random.Range(0, _waypoints.Length - 1);
-                //if (curDestPoint == destPoint)
-                //{
-                //    destPoint = Random.Range(0, _waypoints.Length - 1);
-                //}
-               
+            {  
                 return false;
             }
 
@@ -201,12 +212,24 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private IEnumerator<NodeResult> Focus()
     {
         Debug.Log("Focus");
+
+        _npc.speed = 0;
+        _ac.WalkAnimation(false);
+        _ac.LookAroundAnimation(true);
+
+        Vector3 characterDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
+        this.transform.rotation = Quaternion.LookRotation(characterDirection);
+
         yield return NodeResult.Success; //go to walk to character
     }
 
     private IEnumerator<NodeResult> WalkToCharacter()
     {
         Debug.Log("Walk to character");
+        _ac.WalkAnimation(true);
+        _npc.destination = _character.position;
+        _npc.speed = _walkingspeed;
+
         yield return NodeResult.Success;
     }
 
@@ -240,16 +263,74 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         //Debug.Log("walk to next point");
         _ac.WalkAnimation(true);
+        _npc.speed = _walkingspeed;
         _npc.destination = _waypoints[_destPoint].position;
 
         yield return NodeResult.Success;
     }
 
-    private void NPCFieldOfView()
-    {
-        Debug.DrawRay(_startPos.position, _startPos.forward * _fieldOfViewDistance, Color.white);
-        Debug.DrawRay(_startPos.position, (_startPos.forward + _startPos.right).normalized * _fieldOfViewDistance, Color.black);
-        Debug.DrawRay(_startPos.position, (_startPos.forward - _startPos.right).normalized * _fieldOfViewDistance, Color.black);
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, maxRadius);
+
+        Vector3 fovLine1 = Quaternion.AngleAxis(maxAngle, transform.up) * transform.forward * maxRadius;
+        Vector3 fovLine2 = Quaternion.AngleAxis(-maxAngle, transform.up) * transform.forward * maxRadius;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(transform.position, fovLine1);
+        Gizmos.DrawRay(transform.position, fovLine2);
+
+        if (!isInFov)
+            Gizmos.color = Color.red;
+        else
+            Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, (_character.position - transform.position).normalized * maxRadius);
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawRay(transform.position, transform.forward * maxRadius);
+
+
+    }
+
+    public static bool inFOV(Transform checkingObject, Transform target, float maxAngle, float maxRadius)
+    {
+        // https://www.youtube.com/watch?v=BJPSiWNZVow
+        Collider[] overlaps = new Collider[20];
+        int count = Physics.OverlapSphereNonAlloc(checkingObject.position, maxRadius, overlaps);
+
+        for (int i = 0; i < count + 1; i++)
+        {
+
+            if (overlaps[i] != null)
+            {
+                if (overlaps[i].transform == target)
+                {
+
+                    Vector3 directionBetween = (target.position - checkingObject.position).normalized;
+                    directionBetween.y *= 0;
+
+                    float angle = Vector3.Angle(checkingObject.forward, directionBetween);
+
+                    if (angle <= maxAngle)
+                    {
+                        Ray ray = new Ray(checkingObject.position, target.position - checkingObject.position);
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(ray, out hit, maxRadius))
+                        {
+                            //Debug.Log("hit  " + hit.transform.tag);
+                            //Debug.Log("target  " + target.tag);
+                            if (hit.transform.tag == target.tag)
+                                return true;
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
