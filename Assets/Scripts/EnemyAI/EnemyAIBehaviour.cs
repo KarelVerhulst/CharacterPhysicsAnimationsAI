@@ -126,7 +126,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Selectors
     private INode NPCActionWithCharacter()
     {
-        Debug.Log("NPCActionWithCharacter");
+        //Debug.Log("NPCActionWithCharacter");
         return new SelectorNode(
                 FightCharacter(),
                 new ActionNode(WalkToCharacter)
@@ -136,63 +136,83 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Conditions
     private bool IsCharacterInRange()
     {
+       
         isInFov = inFOV(transform, _character, maxAngle, maxRadius);
 
         if (isInFov)
         {
-            Debug.Log("focus on character");
+            //Debug.Log("focus on character");
+            //Debug.Log("IsCharacterInRange TRUE");
             return true;
         }
         else
         {
-            Debug.Log("go to next node");
+            _ac.FightAnimation(false);
+            //Debug.Log("go to next node");
+           // Debug.Log("IsCharacterInRange FALSE");
             return false;
         }
     }
 
     private bool IsCloseToCharacter()
     {
-        //return true;
-        return Random.Range(0, 1) > 0.3;
+        
+        if (Vector3.Distance(this.transform.position, _character.position) < 1.3f)
+        {
+           // Debug.Log("isCloseTocharacter TRUE");
+            return true;
+        }
+        else
+        {
+            //Debug.Log("isCloseTocharacter FALSE");
+            return false;
+        }
     }
 
     private bool IsNpcAtPoint()
     {
+        
         if (_npc.remainingDistance < 0.1f)
         {
+            //Debug.Log("NPCisAtPoint");
             _npc.transform.position = _waypoints[_destPoint].position;
             _timer -= Time.deltaTime;
             _ac.WalkAnimation(false);
             _ac.LookAroundAnimation(true);
 
             if (_timer <= 5.0f)
-            {  
+            {
+                //Debug.Log("isNPC at point TIMER < 5 FALSE");
                 return false;
             }
-
-            return true;
+           // Debug.Log("isNPC at point");
+            return true; //stile stare
         }
         else
         {
+            //Debug.Log("isNPC at point REMAININGDISTANCE < 0.1f FALSE");
             return false;
         }
     }
 
     private bool IsTimerRunning()
     {
+        
         if (_timer <= 0f)
         {
             _timer = _standDefault;
             _destPoint = (_destPoint + 1) % _waypoints.Length;
-
+            //Debug.Log("Is timer running TIMER < 5 FALSE");
             return false;
         }
         else if(_npc.remainingDistance < 0.1f)
         {
-            return true;
+            //Debug.Log("Is timer running TRUE");
+            return true; //still idle
         }
         else
         {
+            //Debug.Log("Is timer running ELSE FALSE");
             return false;
         }
         
@@ -200,33 +220,39 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private bool IsTimerReset()
     {
-        if (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x && _timer == _standDefault) 
+        Debug.Log("npc != waypointsposition | " + (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x));
+        Debug.Log("_timer == standdefault | " + (_timer == _standDefault));
+        Debug.Log(_timer);
+
+        if (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x) //&& _timer == _standDefault 
         {
+           // Debug.Log("istimerReset TRUE");
             return true;
         }
-
+        //Debug.Log("istimerReset FALSE");
         return false;
     }
 
     //Action for the actionNode
     private IEnumerator<NodeResult> Focus()
     {
-        Debug.Log("Focus");
+        //Debug.Log("Focus");
 
-        _npc.speed = 0;
-        _ac.WalkAnimation(false);
-        _ac.LookAroundAnimation(true);
+        //_npc.speed = 0;
+        //_ac.WalkAnimation(false);
+        //_ac.LookAroundAnimation(true);
 
-        Vector3 characterDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
-        this.transform.rotation = Quaternion.LookRotation(characterDirection);
+        //Vector3 characterDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
+        //this.transform.rotation = Quaternion.LookRotation(characterDirection);
 
         yield return NodeResult.Success; //go to walk to character
     }
 
     private IEnumerator<NodeResult> WalkToCharacter()
     {
-        Debug.Log("Walk to character");
+        //Debug.Log("Walk to character");
         _ac.WalkAnimation(true);
+        _ac.FightAnimation(false);
         _npc.destination = _character.position;
         _npc.speed = _walkingspeed;
 
@@ -235,7 +261,10 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private IEnumerator<NodeResult> Fight()
     {
-        Debug.Log("Fight");
+      // Debug.Log("Fight");
+        _ac.WalkAnimation(false);
+        _ac.FightAnimation(true);
+        _npc.speed = 0;
         yield return NodeResult.Success;
     }
 
@@ -254,7 +283,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private IEnumerator<NodeResult> Idle()
     {
-        //Debug.Log("Idle");
+      //  Debug.Log("Idle");
         _ac.LookAroundAnimation(false);
         yield return NodeResult.Success;
     }
@@ -268,8 +297,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         yield return NodeResult.Success;
     }
-
-
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
@@ -307,12 +335,15 @@ public class EnemyAIBehaviour : MonoBehaviour {
             {
                 if (overlaps[i].transform == target)
                 {
-
+                    /* 
+                     * info about Direction and Distance from One Object to Another
+                     * https://docs.unity3d.com/Manual/DirectionDistanceFromOneObjectToAnother.html
+                     */
                     Vector3 directionBetween = (target.position - checkingObject.position).normalized;
                     directionBetween.y *= 0;
 
                     float angle = Vector3.Angle(checkingObject.forward, directionBetween);
-
+                   // Debug.Log(angle);
                     if (angle <= maxAngle)
                     {
                         Ray ray = new Ray(checkingObject.position, target.position - checkingObject.position);

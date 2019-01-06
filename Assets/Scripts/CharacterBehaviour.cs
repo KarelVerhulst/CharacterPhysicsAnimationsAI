@@ -41,7 +41,10 @@ public class CharacterBehaviour : MonoBehaviour
 
     float currentHeight;
     Vector3 currentCenter;
-    
+
+    private int _health = 10;
+    [SerializeField]
+    private Transform _respawnPoint;
 
     //externe scripts
     private InputController _ic = InputController.Instance();
@@ -63,6 +66,11 @@ public class CharacterBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_health <= 0)
+        {
+            this.transform.position = _respawnPoint.position;
+            _health = 10;
+        }
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
             return;
 
@@ -241,6 +249,14 @@ public class CharacterBehaviour : MonoBehaviour
         {
             _velocity.x = 0;
             _velocity.z = 0;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "NPCSword")
+        {
+            _health--;
         }
     }
 }

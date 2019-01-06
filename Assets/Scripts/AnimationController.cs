@@ -27,6 +27,7 @@ public class AnimationController {
     // nps animation params
     private int _isWalkingParam = Animator.StringToHash("IsWalking");
     private int _isLookingAroundParam = Animator.StringToHash("IsLookingAround");
+    private int _isFightingParam = Animator.StringToHash("IsFighting");
 
 
     public void MoveAnimation(Vector3 movement)
@@ -98,5 +99,10 @@ public class AnimationController {
     public void LookAroundAnimation(bool isLookAround)
     {
         _animator.SetBool(_isLookingAroundParam, isLookAround);
+    }
+
+    public void FightAnimation(bool isFighting)
+    {
+        _animator.SetBool(_isFightingParam, isFighting);
     }
 }
