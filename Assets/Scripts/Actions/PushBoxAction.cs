@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PushBoxAction : MonoBehaviour {
-
+    
     [SerializeField]
     private float _pushPower;
     
     private Animator _animator;
     private CharacterController _charController;
-    private Vector3 _currentCharControllerCenter;
+    private float _currentCharControllerRadius;
 
     private bool _isCharacterInTrigger;
     private bool _canBoxMove;
@@ -25,7 +25,7 @@ public class PushBoxAction : MonoBehaviour {
         _ac = new AnimationController(_animator);
         _charController = this.GetComponent<CharacterController>();
 
-        _currentCharControllerCenter = _charController.center;
+        _currentCharControllerRadius = _charController.radius;
     }
     
 
@@ -33,9 +33,20 @@ public class PushBoxAction : MonoBehaviour {
     void Update () {
         if (_isCharacterInTrigger && _ic.IsButtonXPressed())
         {
-            _isPushing = true;
-            _canBoxMove = true;
-            _charController.center = new Vector3(0,1,0.6f);
+            _isPushing = !_isPushing;
+
+            if (_isPushing)
+            {
+                _canBoxMove = true;
+                _charController.radius = 0.8f;
+            }
+            else
+            {
+                _canBoxMove = false;
+            }
+            //_isPushing = true;
+            //_canBoxMove = true;
+            //_charController.radius = 0.8f;
         }
 
         if (!_isCharacterInTrigger)
@@ -62,7 +73,7 @@ public class PushBoxAction : MonoBehaviour {
         if (other.gameObject.layer == _pushBoxLayer)
         {
             _isCharacterInTrigger = false;
-            _charController.center = _currentCharControllerCenter;
+            _charController.radius = _currentCharControllerRadius;
         }
     }
 
@@ -92,6 +103,7 @@ public class PushBoxAction : MonoBehaviour {
         // Apply the push
         if (_canBoxMove)
         {
+            body.constraints = RigidbodyConstraints.FreezeRotation;
             //body.velocity = pushDir * 2.0f;
             body.AddForce(pushDir * _pushPower, ForceMode.Impulse);
         }

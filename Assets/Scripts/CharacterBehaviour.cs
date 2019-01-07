@@ -29,6 +29,8 @@ public class CharacterBehaviour : MonoBehaviour
     private float _jumpHeight = 1f;
     [SerializeField]
     private float _dragOnGround = 3f;
+    [SerializeField]
+    private SwordController _sc;
     
     private CharacterController _characterController;
 
@@ -42,7 +44,7 @@ public class CharacterBehaviour : MonoBehaviour
     float currentHeight;
     Vector3 currentCenter;
 
-    private int _health = 10;
+    private int _health = 15;
     [SerializeField]
     private Transform _respawnPoint;
 
@@ -73,9 +75,11 @@ public class CharacterBehaviour : MonoBehaviour
         }
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
             return;
-
-        //_movement = _ic.KeyMove();
+        
+      
         _movement = _ic.GetLeftJoystickInput();
+        
+
                 
         if (_ic.IsButtonAPressed() && !_isCrouch)
         {
@@ -217,7 +221,6 @@ public class CharacterBehaviour : MonoBehaviour
         if (_characterController.isGrounded)
         {
             ResetVelocity();
-            
             if (!_isCrouch)
             {
                 if (_movement.magnitude <= 0.6)
@@ -233,6 +236,22 @@ public class CharacterBehaviour : MonoBehaviour
                 {
                     _acceleration = 20;
                     _dragOnGround = 5;
+                }
+
+                bool isMoveSkewForward = (_movement.normalized.x > 0 && _movement.normalized.z > 0) || (_movement.normalized.x < 0 && _movement.normalized.z > 0);
+                bool isMoveSkewBackward = (_movement.normalized.x > 0 && _movement.normalized.z < 0) || (_movement.normalized.x < 0 && _movement.normalized.z < 0);
+
+                if (isMoveSkewForward && _sc.IsSwordInHand)
+                {
+                    _acceleration = 12;
+                    _dragOnGround = 5;
+                    //Debug.Log("schuin voorwaarts");
+                }
+                else if (isMoveSkewBackward)
+                {
+                    _acceleration = 10;
+                    _dragOnGround = 5;
+                    //Debug.Log("schuin achterwaart");
                 }
             }
             else //you are in the crouch statement
@@ -254,7 +273,7 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.name == "NPCSword")
+        if (other.gameObject.layer == 12)
         {
             _health--;
         }

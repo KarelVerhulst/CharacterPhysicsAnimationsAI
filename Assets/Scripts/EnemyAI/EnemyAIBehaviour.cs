@@ -40,6 +40,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     public float maxRadius;
 
     private bool isInFov = false;
+    private int _health = 10;
 
     // Use this for initialization
     void Start () {
@@ -56,9 +57,26 @@ public class EnemyAIBehaviour : MonoBehaviour {
     
     // Update is called once per frame
     void Update () {
-       // isInFov = inFOV(transform, _character, maxAngle, maxRadius);
-        
-        //NPCFieldOfView();
+        if (_health < 0)
+        {
+            Debug.Log("dead");
+            this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
+            _health = 10;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        /*
+         * https://docs.unity3d.com/Manual/nav-MixingComponents.html
+         * add charactercontroller or collider with rigidbody
+         * otherwise this code will not excecute
+         */
+        if (other.gameObject.layer == 11)
+        {
+            Debug.Log(other.gameObject.layer);
+            _health--;
+        }
     }
 
     IEnumerator RunTree()
@@ -136,7 +154,6 @@ public class EnemyAIBehaviour : MonoBehaviour {
     // Conditions
     private bool IsCharacterInRange()
     {
-       
         isInFov = inFOV(transform, _character, maxAngle, maxRadius);
 
         if (isInFov)
@@ -220,9 +237,9 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private bool IsTimerReset()
     {
-        Debug.Log("npc != waypointsposition | " + (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x));
-        Debug.Log("_timer == standdefault | " + (_timer == _standDefault));
-        Debug.Log(_timer);
+        //Debug.Log("npc != waypointsposition | " + (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x));
+       // Debug.Log("_timer == standdefault | " + (_timer == _standDefault));
+       // Debug.Log(_timer);
 
         if (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x) //&& _timer == _standDefault 
         {
@@ -318,10 +335,8 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         Gizmos.color = Color.black;
         Gizmos.DrawRay(transform.position, transform.forward * maxRadius);
-
-
     }
-
+    
     public static bool inFOV(Transform checkingObject, Transform target, float maxAngle, float maxRadius)
     {
         // https://www.youtube.com/watch?v=BJPSiWNZVow
