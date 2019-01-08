@@ -24,6 +24,8 @@ public class AnimationController {
     private int _isMeleeAttackParam = Animator.StringToHash("IsMeleeAttack");
     private int _isSwitchingButtonParam = Animator.StringToHash("IsSwitchingButton");
     private int _isPushingParam = Animator.StringToHash("IsPushing");
+    private int _isClimbinParam = Animator.StringToHash("IsClimbing");
+    private int _isClimbVelocityParam = Animator.StringToHash("ClimbVelocity");
     // nps animation params
     private int _isWalkingParam = Animator.StringToHash("IsWalking");
     private int _isLookingAroundParam = Animator.StringToHash("IsLookingAround");
@@ -84,6 +86,12 @@ public class AnimationController {
     public void PushboxAnimation(bool isPushing)
     {
         _animator.SetBool(_isPushingParam, isPushing);
+    }
+
+    public void ClimbAnimation(bool isClimbing, float climbVel)
+    {
+        _animator.SetBool(_isClimbinParam, isClimbing);
+        _animator.SetFloat(_isClimbVelocityParam, climbVel);
     }
 
     public bool CheckIfAnimationIsPlaying(string animationName)

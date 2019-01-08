@@ -15,6 +15,8 @@ public class CharacterBehaviour : MonoBehaviour
      * 
      */
      
+    public bool IsGravity { get; set; }
+
     //locomotion
     [SerializeField]
     private float _acceleration = 3; // [m/s^2]
@@ -62,7 +64,8 @@ public class CharacterBehaviour : MonoBehaviour
         currentHeight = _characterController.height;
         currentCenter = _characterController.center;
 
-        _headTrigger = FindObjectOfType<HeadTrigger>();
+        _headTrigger = GetComponent<HeadTrigger>();
+        IsGravity = true;
     }
 
     // Update is called once per frame
@@ -73,14 +76,13 @@ public class CharacterBehaviour : MonoBehaviour
             this.transform.position = _respawnPoint.position;
             _health = 10;
         }
+
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
             return;
-        
-      
+
+
         _movement = _ic.GetLeftJoystickInput();
         
-
-                
         if (_ic.IsButtonAPressed() && !_isCrouch)
         {
             _isJumping = true;
@@ -118,7 +120,7 @@ public class CharacterBehaviour : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (!_characterController.isGrounded)
+        if (IsGravity && !_characterController.isGrounded)
         {
             _velocity += Physics.gravity * Time.deltaTime; // g[m/s^2] * t[s]
         }

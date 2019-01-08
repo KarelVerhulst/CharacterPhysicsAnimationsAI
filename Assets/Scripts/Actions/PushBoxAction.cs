@@ -13,7 +13,7 @@ public class PushBoxAction : MonoBehaviour {
 
     private bool _isCharacterInTrigger;
     private bool _canBoxMove;
-    private int _pushBoxLayer = 10;
+    private int _pushBoxLayer = 13;
     private bool _isPushing;
 
     private AnimationController _ac;

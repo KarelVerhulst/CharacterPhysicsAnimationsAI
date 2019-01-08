@@ -15,12 +15,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     //field of view
     [SerializeField]
     private Transform _startPos;
-    [SerializeField]
-    private float _fieldOfView = 2.0f;
-    [SerializeField]
-    private float _fieldOfViewDistance = 15.0f;
-
-
+    
     //other
     private INode _rootNode;
     private NavMeshAgent _npc;
@@ -34,12 +29,13 @@ public class EnemyAIBehaviour : MonoBehaviour {
     //stay for x time at a point
     private float _timer;
     private float _standDefault = 10.0f;
-
-    //test
+    
+    //field of view
     public float maxAngle;
     public float maxRadius;
-
     private bool isInFov = false;
+
+    //health npc
     private int _health = 10;
 
     // Use this for initialization

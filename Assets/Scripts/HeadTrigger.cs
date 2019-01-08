@@ -8,10 +8,12 @@ public class HeadTrigger : MonoBehaviour {
      * Check if something is above the character
      */
     public bool IsInTunnel { get; set; }
+
+    private int _tunnelLayer = 14;
     
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag != "Player")
+        if (other.gameObject.layer == _tunnelLayer)
         {
             IsInTunnel = true;
         }
@@ -19,9 +21,6 @@ public class HeadTrigger : MonoBehaviour {
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag != "Player")
-        {
-            IsInTunnel = false;
-        }
+        IsInTunnel = false;
     }
 }
