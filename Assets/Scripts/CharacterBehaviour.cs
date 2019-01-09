@@ -77,7 +77,7 @@ public class CharacterBehaviour : MonoBehaviour
             _health = 10;
         }
 
-        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
+        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("Blend Tree Climb"))
             return;
 
 

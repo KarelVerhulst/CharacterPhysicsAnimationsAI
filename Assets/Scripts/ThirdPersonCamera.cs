@@ -32,20 +32,23 @@ public class ThirdPersonCamera : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject"))
-            return;
-            
 
-
-
-        //rotate camera and character horizontal
-        _characterController.transform.eulerAngles += new Vector3(0, _ic.GetRightJoystickInput().x,0) * _cameraSpeed * Time.deltaTime;
-        
         //rotate camera vertical with a limit
         _v3Rotate.x += _ic.GetRightJoystickInput().y * _cameraSpeed * Time.deltaTime;
         _v3Rotate.x = Mathf.Clamp(_v3Rotate.x, _rotationLimit.x, _rotationLimit.y);
 
         _characterPos.transform.localEulerAngles = _v3Rotate;
+
+        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("BlendTreeClimb"))
+            return;
+
+        //rotate camera and character horizontal
+        _characterController.transform.eulerAngles += new Vector3(0, _ic.GetRightJoystickInput().x,0) * _cameraSpeed * Time.deltaTime;
+
+
+        
+
+        
 
         //animation
         /*

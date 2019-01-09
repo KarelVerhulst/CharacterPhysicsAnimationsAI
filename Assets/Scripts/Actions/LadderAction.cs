@@ -8,6 +8,12 @@ public class LadderAction : MonoBehaviour {
 
     [SerializeField]
     private GameObject _char;
+    [SerializeField]
+    private Transform _startPoint;
+    [SerializeField]
+    private Vector3 _FaceToLadderRotation;
+    [SerializeField]
+    private Transform _characterTopPosition;
 
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
@@ -28,8 +34,10 @@ public class LadderAction : MonoBehaviour {
         
         if (_ic.IsButtonXPressed() && _isCharacterInTriggerBox)
         {
-            Debug.Log("klik en in triggerbox");
-            IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
+           // Debug.Log("klik en in triggerbox");
+            //IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
+            IsCharacterReadyToClimb = true;
+            RotateAndPositionCharacterToLadder();
         }
 
         if (IsCharacterReadyToClimb)
@@ -38,11 +46,11 @@ public class LadderAction : MonoBehaviour {
             _ac.ClimbAnimation(true, 0);
             _char.GetComponent<CharacterBehaviour>().IsGravity = false;
         }
-        else
-        {
-            _ac.ClimbAnimation(false, 0);
-            _char.GetComponent<CharacterBehaviour>().IsGravity = true;
-        }
+        //else
+        //{
+        //    _ac.ClimbAnimation(false, 0);
+        //    _char.GetComponent<CharacterBehaviour>().IsGravity = true;
+        //}
 
         if (IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z > .5f)
         {
@@ -59,15 +67,31 @@ public class LadderAction : MonoBehaviour {
     {
         if (other.gameObject.layer == _playerLayer)
         {
+            //Debug.Log("trigger enter");
             _isCharacterInTriggerBox = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == _playerLayer)
+        if (other.gameObject.layer == _playerLayer && !_char.GetComponent<CharacterController>().isGrounded)
         {
-            _isCharacterInTriggerBox = false;
+            Debug.Log("exit trigger and player is NOT grounded");
+            _ac.EndClimbAnimation(true);
+            //_char.transform.position = _characterTopPosition.position;
         }
+        //else if (other.gameObject.layer == _playerLayer)
+        //{
+        //    Debug.Log("trigger exit");
+        //    _ac.ClimbAnimation(false, 0);
+        //    _char.GetComponent<CharacterBehaviour>().IsGravity = true;
+        //    _isCharacterInTriggerBox = false;
+        //}
+    }
+
+    private void RotateAndPositionCharacterToLadder()
+    {
+        _char.transform.position = _startPoint.position;
+        _char.transform.rotation = Quaternion.Euler(_FaceToLadderRotation);
     }
 }

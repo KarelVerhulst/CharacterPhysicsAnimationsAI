@@ -26,6 +26,7 @@ public class AnimationController {
     private int _isPushingParam = Animator.StringToHash("IsPushing");
     private int _isClimbinParam = Animator.StringToHash("IsClimbing");
     private int _isClimbVelocityParam = Animator.StringToHash("ClimbVelocity");
+    private int _isAtTopLadderParam = Animator.StringToHash("IsAtTopLadder");
     // nps animation params
     private int _isWalkingParam = Animator.StringToHash("IsWalking");
     private int _isLookingAroundParam = Animator.StringToHash("IsLookingAround");
@@ -94,8 +95,14 @@ public class AnimationController {
         _animator.SetFloat(_isClimbVelocityParam, climbVel);
     }
 
+    public void EndClimbAnimation(bool isAtTopLadder)
+    {
+        _animator.SetBool(_isAtTopLadderParam, isAtTopLadder);
+    }
+
     public bool CheckIfAnimationIsPlaying(string animationName)
     {
+        Debug.Log(_animator.GetCurrentAnimatorStateInfo(0).IsName(animationName));
         return _animator.GetCurrentAnimatorStateInfo(0).IsName(animationName);
     }
 
