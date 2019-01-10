@@ -33,7 +33,9 @@ public class CharacterBehaviour : MonoBehaviour
     private float _dragOnGround = 3f;
     [SerializeField]
     private SwordController _sc;
-    
+    [SerializeField]
+    private HUDPlayer _hudHealth;
+
     private CharacterController _characterController;
 
     private Vector3 _velocity = Vector3.zero;
@@ -54,6 +56,7 @@ public class CharacterBehaviour : MonoBehaviour
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
     private HeadTrigger _headTrigger;
+    
 
     // Use this for initialization
     void Start()
@@ -65,16 +68,19 @@ public class CharacterBehaviour : MonoBehaviour
         currentCenter = _characterController.center;
 
         _headTrigger = GetComponent<HeadTrigger>();
+        _hudHealth.Health = 10;
         IsGravity = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_health <= 0)
+
+        if (_hudHealth.Health <= 0)
         {
             this.transform.position = _respawnPoint.position;
             _health = 10;
+            _hudHealth.Health = 10;
         }
 
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("Blend Tree Climb"))
@@ -277,7 +283,8 @@ public class CharacterBehaviour : MonoBehaviour
     {
         if (other.gameObject.layer == 12)
         {
-            _health--;
+            //_health--;
+            _hudHealth.Health--;
         }
     }
 }
