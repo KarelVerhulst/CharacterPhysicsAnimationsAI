@@ -76,7 +76,7 @@ public class LadderAction : MonoBehaviour {
     {
         if (other.gameObject.layer == _playerLayer && !_char.GetComponent<CharacterController>().isGrounded)
         {
-            Debug.Log("exit trigger and player is NOT grounded");
+           // Debug.Log("exit trigger and player is NOT grounded");
             _ac.EndClimbAnimation(true);
             //_char.transform.position = _characterTopPosition.position;
         }

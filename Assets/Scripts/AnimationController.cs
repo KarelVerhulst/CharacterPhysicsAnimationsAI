@@ -102,7 +102,7 @@ public class AnimationController {
 
     public bool CheckIfAnimationIsPlaying(string animationName)
     {
-        Debug.Log(_animator.GetCurrentAnimatorStateInfo(0).IsName(animationName));
+      //  Debug.Log(_animator.GetCurrentAnimatorStateInfo(0).IsName(animationName));
         return _animator.GetCurrentAnimatorStateInfo(0).IsName(animationName);
     }
 

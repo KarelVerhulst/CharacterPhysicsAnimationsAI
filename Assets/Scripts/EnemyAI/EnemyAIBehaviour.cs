@@ -11,6 +11,8 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private Transform[] _waypoints;
     [SerializeField]
     private Transform _lookAtPosition;
+    [SerializeField]
+    private HUD _hudHealth;
 
     //field of view
     [SerializeField]
@@ -34,9 +36,10 @@ public class EnemyAIBehaviour : MonoBehaviour {
     public float maxAngle;
     public float maxRadius;
     private bool isInFov = false;
+    private bool _isCharacterHittingOnMe = false;
 
     //health npc
-    private int _health = 10;
+    //private int _health = 10;
 
     // Use this for initialization
     void Start () {
@@ -45,7 +48,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
         _ac = new AnimationController(_animator);
         _timer = _standDefault;
         _destPoint = Random.Range(0, _waypoints.Length - 1);
-        
+
         SetupRoot();
 
         StartCoroutine(RunTree());
@@ -53,11 +56,18 @@ public class EnemyAIBehaviour : MonoBehaviour {
     
     // Update is called once per frame
     void Update () {
-        if (_health < 0)
+        if (_hudHealth.Health <= 0)
         {
             Debug.Log("dead");
             this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
-            _health = 10;
+            _hudHealth.Health = _hudHealth.StartHealth;
+            _isCharacterHittingOnMe = false;
+        }
+
+        if (_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
+        {
+            Debug.Log("character is dead");
+            _isCharacterHittingOnMe = false;
         }
     }
 
@@ -70,8 +80,9 @@ public class EnemyAIBehaviour : MonoBehaviour {
          */
         if (other.gameObject.layer == 11)
         {
+            _isCharacterHittingOnMe = true;
             Debug.Log(other.gameObject.layer);
-            _health--;
+            _hudHealth.Health--;
         }
     }
 
@@ -155,14 +166,25 @@ public class EnemyAIBehaviour : MonoBehaviour {
         if (isInFov)
         {
             //Debug.Log("focus on character");
-            //Debug.Log("IsCharacterInRange TRUE");
+            Debug.Log("IsCharacterInRange TRUE");
             return true;
         }
         else
         {
+            if (_isCharacterHittingOnMe)
+            {
+                Debug.Log(_isCharacterHittingOnMe);
+                Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
+                this.transform.rotation = Quaternion.LookRotation(newDirection);
+            }
+            else
+            {
+                _isCharacterHittingOnMe = false;
+            }
+            
             _ac.FightAnimation(false);
             //Debug.Log("go to next node");
-           // Debug.Log("IsCharacterInRange FALSE");
+            // Debug.Log("IsCharacterInRange FALSE");
             return false;
         }
     }
@@ -336,7 +358,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     public static bool inFOV(Transform checkingObject, Transform target, float maxAngle, float maxRadius)
     {
         // https://www.youtube.com/watch?v=BJPSiWNZVow
-        Collider[] overlaps = new Collider[20];
+        Collider[] overlaps = new Collider[100];
         int count = Physics.OverlapSphereNonAlloc(checkingObject.position, maxRadius, overlaps);
 
         for (int i = 0; i < count + 1; i++)

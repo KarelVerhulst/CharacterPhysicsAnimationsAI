@@ -16,6 +16,7 @@ public class CharacterBehaviour : MonoBehaviour
      */
      
     public bool IsGravity { get; set; }
+    public bool IsDead { get; set; }
 
     //locomotion
     [SerializeField]
@@ -34,7 +35,7 @@ public class CharacterBehaviour : MonoBehaviour
     [SerializeField]
     private SwordController _sc;
     [SerializeField]
-    private HUDPlayer _hudHealth;
+    private HUD _hudHealth;
 
     private CharacterController _characterController;
 
@@ -68,8 +69,9 @@ public class CharacterBehaviour : MonoBehaviour
         currentCenter = _characterController.center;
 
         _headTrigger = GetComponent<HeadTrigger>();
-        _hudHealth.Health = 10;
+        //_hudHealth.Health = 10;
         IsGravity = true;
+        IsDead = false;
     }
 
     // Update is called once per frame
@@ -78,9 +80,14 @@ public class CharacterBehaviour : MonoBehaviour
 
         if (_hudHealth.Health <= 0)
         {
+            IsDead = true;
             this.transform.position = _respawnPoint.position;
-            _health = 10;
-            _hudHealth.Health = 10;
+            //_health = 10;
+            _hudHealth.Health = _hudHealth.StartHealth;
+        }
+        else
+        {
+            IsDead = false;
         }
 
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("Blend Tree Climb"))
@@ -283,6 +290,7 @@ public class CharacterBehaviour : MonoBehaviour
     {
         if (other.gameObject.layer == 12)
         {
+            Debug.Log("hit npc");
             //_health--;
             _hudHealth.Health--;
         }
