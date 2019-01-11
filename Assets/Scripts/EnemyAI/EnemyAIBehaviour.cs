@@ -163,17 +163,17 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         isInFov = inFOV(transform, _character, maxAngle, maxRadius);
 
-        if (isInFov)
+        if (isInFov && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
             //Debug.Log("focus on character");
-            Debug.Log("IsCharacterInRange TRUE");
+            //Debug.Log("IsCharacterInRange TRUE");
             return true;
         }
         else
         {
             if (_isCharacterHittingOnMe)
             {
-                Debug.Log(_isCharacterHittingOnMe);
+               // Debug.Log(_isCharacterHittingOnMe);
                 Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
                 this.transform.rotation = Quaternion.LookRotation(newDirection);
             }

@@ -57,6 +57,9 @@ public class CharacterBehaviour : MonoBehaviour
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
     private HeadTrigger _headTrigger;
+
+    //test
+    private float _deathTimer = 0;
     
 
     // Use this for initialization
@@ -81,13 +84,20 @@ public class CharacterBehaviour : MonoBehaviour
         if (_hudHealth.Health <= 0)
         {
             IsDead = true;
-            this.transform.position = _respawnPoint.position;
-            //_health = 10;
-            _hudHealth.Health = _hudHealth.StartHealth;
+            _ac.DeathAnimation(true);
+            _deathTimer += Time.deltaTime;
+
+            if (_deathTimer >= 5f)
+            {
+                _ac.DeathAnimation(false);
+                IsDead = false;
+                this.transform.position = _respawnPoint.position;
+                _hudHealth.Health = _hudHealth.StartHealth;
+            }
         }
         else
         {
-            IsDead = false;
+            _deathTimer = 0;
         }
 
         if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("Blend Tree Climb"))
