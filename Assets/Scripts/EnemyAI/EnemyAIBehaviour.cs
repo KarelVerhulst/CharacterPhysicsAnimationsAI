@@ -38,6 +38,9 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private bool isInFov = false;
     private bool _isCharacterHittingOnMe = false;
 
+    private float _deathTimer = 0;
+    private bool _isDeath = false;
+
     //health npc
     //private int _health = 10;
 
@@ -58,10 +61,29 @@ public class EnemyAIBehaviour : MonoBehaviour {
     void Update () {
         if (_hudHealth.Health <= 0)
         {
+            _isDeath = true;
             Debug.Log("dead");
-            this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
-            _hudHealth.Health = _hudHealth.StartHealth;
-            _isCharacterHittingOnMe = false;
+            _ac.DeathAnimation(true);
+            _ac.FightAnimation(false);
+            _deathTimer += Time.deltaTime;
+
+            if (_deathTimer >= 5f)
+            {
+                _ac.DeathAnimation(false);
+                this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
+                _hudHealth.Health = _hudHealth.StartHealth;
+                _isCharacterHittingOnMe = false;
+                _isDeath = false;
+                _deathTimer = 0;
+            }
+
+            // this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
+            // _hudHealth.Health = _hudHealth.StartHealth;
+            //_isCharacterHittingOnMe = false;
+        }
+        else
+        {
+           
         }
 
         if (_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
@@ -163,7 +185,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         isInFov = inFOV(transform, _character, maxAngle, maxRadius);
 
-        if (isInFov && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
+        if (isInFov && !_isDeath && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
             //Debug.Log("focus on character");
             //Debug.Log("IsCharacterInRange TRUE");

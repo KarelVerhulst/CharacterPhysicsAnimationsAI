@@ -57,8 +57,7 @@ public class CharacterBehaviour : MonoBehaviour
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
     private HeadTrigger _headTrigger;
-
-    //test
+    
     private float _deathTimer = 0;
     
 
