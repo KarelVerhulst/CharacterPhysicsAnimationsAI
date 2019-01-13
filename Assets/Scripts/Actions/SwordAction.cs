@@ -7,9 +7,11 @@ public class SwordAction : MonoBehaviour {
     [SerializeField]
     private Transform _posPlayerForAnimation;
     [SerializeField]
-    private Transform _test;
+    private Transform _rightHand;
     [SerializeField]
     private Transform _char;
+    [SerializeField]
+    private GameObject _sword;
 
     private bool _isCharacterInTriggerBox = false;
     private int _playerLayer = 9;
@@ -36,6 +38,7 @@ public class SwordAction : MonoBehaviour {
     void Start () {
         _animator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
+        _animator.GetBehaviour<PickUpSword>().SetBehaviourFields(_rightHand, _sword);
     }
 	
 	// Update is called once per frame

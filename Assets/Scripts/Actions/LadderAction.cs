@@ -14,84 +14,86 @@ public class LadderAction : MonoBehaviour {
     private Vector3 _FaceToLadderRotation;
     [SerializeField]
     private Transform _characterTopPosition;
+    [SerializeField]
+    private Transform _rightHandLadder;
+
+    [SerializeField]
+    private BottomLadderTriggersController _bltc;
+    [SerializeField]
+    private TopLadderTriggersController _tltc;
 
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
 
-    private int _playerLayer = 9;
-    private bool _isCharacterInTriggerBox;
-    private string _currentName;
+    private Animator _charAnimator;
+    
 
 
     // Use this for initialization
     void Start () {
         IsCharacterReadyToClimb = false;
-        _ac = new AnimationController(_char.GetComponent<Animator>());
-	}
+        _charAnimator = _char.GetComponent<Animator>();
+        _ac = new AnimationController(_charAnimator);
+        _charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder,_char, this.GetComponent<LadderAction>());
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
         
-        if (_ic.IsButtonXPressed() && _isCharacterInTriggerBox)
+        if (_ic.IsButtonXPressed() && _bltc.CharacterIsAtGround)
         {
-           // Debug.Log("klik en in triggerbox");
-            //IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
-            IsCharacterReadyToClimb = true;
+            IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
+
             RotateAndPositionCharacterToLadder();
+
+            if (!IsCharacterReadyToClimb)
+            {
+                _ac.ClimbAnimation(false, 0);
+                _char.GetComponent<CharacterBehaviour>().IsGravity = true;
+            }
         }
 
         if (IsCharacterReadyToClimb)
         {
-            //Debug.Log("idle ");
-            _ac.ClimbAnimation(true, 0);
-            _char.GetComponent<CharacterBehaviour>().IsGravity = false;
-        }
-        //else
-        //{
-        //    _ac.ClimbAnimation(false, 0);
-        //    _char.GetComponent<CharacterBehaviour>().IsGravity = true;
-        //}
-
-        if (IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z > .5f)
-        {
-            //Debug.Log("climb up");
-            _ac.ClimbAnimation(true,1);
-            
-            _char.transform.position += new Vector3(0, 0.01f, 0);
+            ClimbingState();
+            AtTopOfTheLadder();
         }
         
-        
-	}
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == _playerLayer)
-        {
-            //Debug.Log("trigger enter");
-            _isCharacterInTriggerBox = true;
-        }
     }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == _playerLayer && !_char.GetComponent<CharacterController>().isGrounded)
-        {
-           // Debug.Log("exit trigger and player is NOT grounded");
-            _ac.EndClimbAnimation(true);
-            //_char.transform.position = _characterTopPosition.position;
-        }
-        //else if (other.gameObject.layer == _playerLayer)
-        //{
-        //    Debug.Log("trigger exit");
-        //    _ac.ClimbAnimation(false, 0);
-        //    _char.GetComponent<CharacterBehaviour>().IsGravity = true;
-        //    _isCharacterInTriggerBox = false;
-        //}
-    }
+    
 
     private void RotateAndPositionCharacterToLadder()
     {
         _char.transform.position = _startPoint.position;
         _char.transform.rotation = Quaternion.Euler(_FaceToLadderRotation);
+    }
+
+    private void ClimbingState()
+    {
+        if (!_tltc.CharacterIsAtTop && IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z > .5f)
+        {
+            _ac.ClimbAnimation(true, 1);
+
+            _char.transform.position += new Vector3(0, 0.01f, 0);
+        }
+        else if (!_bltc.CharacterIsAtGround && IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z < -.5f)
+        {
+            _ac.ClimbAnimation(true, -1);
+            _char.transform.position -= new Vector3(0, 0.01f, 0);
+        }
+        else
+        {
+            _ac.ClimbAnimation(true, 0);
+            _char.GetComponent<CharacterBehaviour>().IsGravity = false;
+        }
+    }
+
+    private void AtTopOfTheLadder()
+    {
+        if (_tltc.CharacterIsAtTop)
+        {
+            _ac.EndClimbAnimation(true);
+        }
     }
 }

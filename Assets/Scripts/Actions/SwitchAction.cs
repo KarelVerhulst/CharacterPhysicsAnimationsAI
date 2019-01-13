@@ -8,6 +8,8 @@ public class SwitchAction : MonoBehaviour {
     private Animator _animator;
     [SerializeField]
     private List<Animation> _gates = new List<Animation>();
+    [SerializeField]
+    private Transform _button;
 
     private int _playerLayer = 9;
     private bool _isCharacterInTriggerBox;
@@ -18,6 +20,7 @@ public class SwitchAction : MonoBehaviour {
     // Use this for initialization
     void Start () {
         _ac = new AnimationController(_animator);
+        _animator.GetBehaviour<PushButton>().SetBehaviourFields(_gates,_button);
 	}
 	
 	// Update is called once per frame
@@ -46,28 +49,6 @@ public class SwitchAction : MonoBehaviour {
         if (other.gameObject.layer == _playerLayer)
         {
             _isCharacterInTriggerBox = false;
-        }
-    }
-    
-    public void OpenCloseGates(bool isClosed)
-    {
-        if (isClosed)
-        {
-            // Debug.Log("Open all the gates");
-            foreach (Animation gate in _gates)
-            {
-                gate.Play("GateOpen");
-                gate.gameObject.GetComponent<BoxCollider>().enabled = false;
-            }
-        }
-        else
-        {
-            //Debug.Log("Close all the gates");
-            foreach (Animation gate in _gates)
-            {
-                gate.Play("GateClose");
-                gate.gameObject.GetComponent<BoxCollider>().enabled = true;
-            }
         }
     }
 }

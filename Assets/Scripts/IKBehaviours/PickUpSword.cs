@@ -14,16 +14,13 @@ public class PickUpSword : StateMachineBehaviour {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _iKWeight = 0;
-        _rightHand = GameObject.Find("mixamorig:RightHand").transform;
-        _sword = GameObject.Find("Sword");
         _sc = _sword.GetComponent<SwordController>();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        _sc = _sword.GetComponent<SwordController>();
-    }
+    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -60,5 +57,11 @@ public class PickUpSword : StateMachineBehaviour {
         //animator.SetIKRotation(AvatarIKGoal.RightHand, _sc.RightHand.rotation); //-> hand doet raar als dit aanstaat
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _iKWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _iKWeight);
+    }
+
+    public void SetBehaviourFields(Transform rightHand, GameObject sword)
+    {
+        _rightHand = rightHand;
+        _sword = sword;
     }
 }

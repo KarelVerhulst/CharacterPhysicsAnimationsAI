@@ -6,15 +6,13 @@ public class PushButton : StateMachineBehaviour {
 
     private Transform _button;
     private float _iKWeight;
-    private SwitchAction _sa;
     private bool _isClosed;
+    private List<Animation> _gates;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _iKWeight = 0;
-        _button = GameObject.Find("button").transform;
-        _sa = _button.GetComponentInParent<SwitchAction>();
         _isClosed = !_isClosed;
     }
 
@@ -43,7 +41,7 @@ public class PushButton : StateMachineBehaviour {
         }
         else
         {
-            _sa.OpenCloseGates(_isClosed);
+            OpenCloseGates();
             _iKWeight = Mathf.Lerp(_iKWeight, 0, .5f);
         }
 
@@ -54,5 +52,33 @@ public class PushButton : StateMachineBehaviour {
         //animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _iKWeight);
 
         //animator.SetIKHintPosition(AvatarIKHint.RightElbow,Vector3.zero);
+    }
+
+    public void SetBehaviourFields(List<Animation> gates, Transform button)
+    {
+        _button = button;
+        _gates = gates;
+    }
+
+    private void OpenCloseGates()
+    {
+        if (_isClosed)
+        {
+            // Debug.Log("Open all the gates");
+            foreach (Animation gate in _gates)
+            {
+                gate.Play("GateOpen");
+                gate.gameObject.GetComponent<BoxCollider>().enabled = false;
+            }
+        }
+        else
+        {
+            //Debug.Log("Close all the gates");
+            foreach (Animation gate in _gates)
+            {
+                gate.Play("GateClose");
+                gate.gameObject.GetComponent<BoxCollider>().enabled = true;
+            }
+        }
     }
 }
