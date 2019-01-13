@@ -12,6 +12,8 @@ public class SwordAction : MonoBehaviour {
     private Transform _char;
     [SerializeField]
     private GameObject _sword;
+    [SerializeField]
+    private HUDPanelTriggers _hudpt;
 
     private bool _isCharacterInTriggerBox = false;
     private int _playerLayer = 9;
@@ -38,7 +40,7 @@ public class SwordAction : MonoBehaviour {
     void Start () {
         _animator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
-        _animator.GetBehaviour<PickUpSword>().SetBehaviourFields(_rightHand, _sword);
+        _animator.GetBehaviour<PickUpSword>().SetBehaviourFields(_rightHand, _sword, _hudpt);
     }
 	
 	// Update is called once per frame
@@ -53,7 +55,6 @@ public class SwordAction : MonoBehaviour {
         }
         else
         {
-            
             if (_ac != null)
             {
                 _ac.PickupObjectAnimation(false);
@@ -65,6 +66,7 @@ public class SwordAction : MonoBehaviour {
     {
         if (other.gameObject.layer == _playerLayer)
         {
+            _hudpt.ShowActionPanel();
             _isCharacterInTriggerBox = true;
         }
     }
@@ -73,7 +75,12 @@ public class SwordAction : MonoBehaviour {
     {
         if (other.gameObject.layer == _playerLayer)
         {
+            _hudpt.HideTriggerPanels();
             _isCharacterInTriggerBox = false;
+            if (_sword.GetComponent<SwordController>().IsSwordInHand)
+            {
+                this.gameObject.GetComponent<BoxCollider>().enabled = false;
+            }
         }
     }
 }

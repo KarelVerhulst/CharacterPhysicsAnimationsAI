@@ -10,6 +10,10 @@ public class SwitchAction : MonoBehaviour {
     private List<Animation> _gates = new List<Animation>();
     [SerializeField]
     private Transform _button;
+    [SerializeField]
+    private HUDPanelTriggers _hudpt;
+    [SerializeField]
+    private SwordController _sword;
 
     private int _playerLayer = 9;
     private bool _isCharacterInTriggerBox;
@@ -34,13 +38,33 @@ public class SwitchAction : MonoBehaviour {
         {
             _ac.PushButtonAnimation(false);
         }
+
+        if (_isCharacterInTriggerBox)
+        {
+            if (_sword.GetComponent<SwordController>().IsSwordInHand)
+            {
+                _hudpt.ShowHoldingSwordPanel();
+            }
+            else
+            {
+                _hudpt.ShowActionPanel();
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == _playerLayer)
         {
-            _isCharacterInTriggerBox = true;
+            if (_sword.IsSwordInHand)
+            {
+                _hudpt.ShowHoldingSwordPanel();
+            }
+            else
+            {
+                _hudpt.ShowActionPanel();
+                _isCharacterInTriggerBox = true;
+            }
         }
     }
 
@@ -49,6 +73,9 @@ public class SwitchAction : MonoBehaviour {
         if (other.gameObject.layer == _playerLayer)
         {
             _isCharacterInTriggerBox = false;
+            _hudpt.HideTriggerPanels();
         }
     }
+
+
 }

@@ -7,6 +7,7 @@ public class PickUpSword : StateMachineBehaviour {
     private Transform _rightHand;
     private AnimationController _ac;
     private GameObject _sword;
+    private HUDPanelTriggers _hudPaneltrigger;
     private SwordController _sc;
     private float _iKWeight;
 
@@ -15,6 +16,7 @@ public class PickUpSword : StateMachineBehaviour {
     {
         _iKWeight = 0;
         _sc = _sword.GetComponent<SwordController>();
+        _hudPaneltrigger.HideTriggerPanels();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -59,9 +61,10 @@ public class PickUpSword : StateMachineBehaviour {
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _iKWeight);
     }
 
-    public void SetBehaviourFields(Transform rightHand, GameObject sword)
+    public void SetBehaviourFields(Transform rightHand, GameObject sword, HUDPanelTriggers hudPaneltrigger)
     {
         _rightHand = rightHand;
         _sword = sword;
+        _hudPaneltrigger = hudPaneltrigger;
     }
 }

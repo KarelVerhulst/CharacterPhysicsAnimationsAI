@@ -49,7 +49,7 @@ public class CharacterBehaviour : MonoBehaviour
     float currentHeight;
     Vector3 currentCenter;
 
-    private int _health = 15;
+   // private int _health = 15;
     [SerializeField]
     private Transform _respawnPoint;
 
