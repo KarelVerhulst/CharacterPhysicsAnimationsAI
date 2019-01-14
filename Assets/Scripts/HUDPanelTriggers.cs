@@ -9,11 +9,6 @@ public class HUDPanelTriggers : MonoBehaviour {
     [SerializeField]
     private GameObject _holdingSwordPanel;
 
-    void Start()
-    {
-        
-    }
-
     public void ShowActionPanel() {
         _actionPanel.SetActive(true);
         _holdingSwordPanel.SetActive(false);

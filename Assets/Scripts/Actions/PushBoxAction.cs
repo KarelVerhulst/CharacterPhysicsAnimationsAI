@@ -6,7 +6,12 @@ public class PushBoxAction : MonoBehaviour {
     
     [SerializeField]
     private float _pushPower;
-    
+    [SerializeField]
+    private SwordController _sword;
+    [SerializeField]
+    private HUDPanelTriggers _hudpt;
+
+
     private Animator _animator;
     private CharacterController _charController;
     private float _currentCharControllerRadius;
@@ -31,7 +36,7 @@ public class PushBoxAction : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (_isCharacterInTrigger && _ic.IsButtonXPressed())
+        if (_isCharacterInTrigger && _ic.IsButtonXPressed() && !_sword.IsSwordInHand)
         {
             _isPushing = !_isPushing;
 
@@ -44,9 +49,6 @@ public class PushBoxAction : MonoBehaviour {
             {
                 _canBoxMove = false;
             }
-            //_isPushing = true;
-            //_canBoxMove = true;
-            //_charController.radius = 0.8f;
         }
 
         if (!_isCharacterInTrigger)
@@ -57,14 +59,21 @@ public class PushBoxAction : MonoBehaviour {
 
         _ac.PushboxAnimation(_isPushing);
     }
-
-   
-
+    
     private void OnTriggerEnter(Collider other)
     {
+        
         if (other.gameObject.layer == _pushBoxLayer)
         {
-            _isCharacterInTrigger = true;
+            if (_sword.IsSwordInHand)
+            {
+                _hudpt.ShowHoldingSwordPanel();
+            }
+            else
+            {
+                _hudpt.ShowActionPanel();
+                _isCharacterInTrigger = true;
+            }
         }
     }
 
@@ -74,6 +83,7 @@ public class PushBoxAction : MonoBehaviour {
         {
             _isCharacterInTrigger = false;
             _charController.radius = _currentCharControllerRadius;
+            _hudpt.HideTriggerPanels();
         }
     }
 
@@ -103,6 +113,7 @@ public class PushBoxAction : MonoBehaviour {
         // Apply the push
         if (_canBoxMove)
         {
+            _hudpt.HideTriggerPanels();
             body.constraints = RigidbodyConstraints.FreezeRotation;
             //body.velocity = pushDir * 2.0f;
             body.AddForce(pushDir * _pushPower, ForceMode.Impulse);

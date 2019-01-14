@@ -41,7 +41,7 @@ public class SwitchAction : MonoBehaviour {
 
         if (_isCharacterInTriggerBox)
         {
-            if (_sword.GetComponent<SwordController>().IsSwordInHand)
+            if (_sword.IsSwordInHand)
             {
                 _hudpt.ShowHoldingSwordPanel();
             }

@@ -13,21 +13,17 @@ public class LadderAction : MonoBehaviour {
     [SerializeField]
     private Vector3 _FaceToLadderRotation;
     [SerializeField]
-    private Transform _characterTopPosition;
-    [SerializeField]
     private Transform _rightHandLadder;
-
     [SerializeField]
     private BottomLadderTriggersController _bltc;
     [SerializeField]
     private TopLadderTriggersController _tltc;
+    [SerializeField]
+    private SwordController _sword;
 
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
-
     private Animator _charAnimator;
-    
-
 
     // Use this for initialization
     void Start () {
@@ -35,13 +31,11 @@ public class LadderAction : MonoBehaviour {
         _charAnimator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_charAnimator);
         _charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder,_char, this.GetComponent<LadderAction>());
-
     }
 	
 	// Update is called once per frame
 	void Update () {
-        
-        if (_ic.IsButtonXPressed() && _bltc.CharacterIsAtGround)
+        if (_ic.IsButtonXPressed() && !_sword.IsSwordInHand && _bltc.CharacterIsAtGroundLadder)
         {
             IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
 
@@ -59,7 +53,6 @@ public class LadderAction : MonoBehaviour {
             ClimbingState();
             AtTopOfTheLadder();
         }
-        
     }
     
 
@@ -77,7 +70,7 @@ public class LadderAction : MonoBehaviour {
 
             _char.transform.position += new Vector3(0, 0.01f, 0);
         }
-        else if (!_bltc.CharacterIsAtGround && IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z < -.5f)
+        else if (!_bltc.CharacterIsAtGroundLadder && IsCharacterReadyToClimb && _ic.GetLeftJoystickInput().z < -.5f)
         {
             _ac.ClimbAnimation(true, -1);
             _char.transform.position -= new Vector3(0, 0.01f, 0);

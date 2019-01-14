@@ -28,6 +28,7 @@ public class AnimationController {
     private int _isClimbVelocityParam = Animator.StringToHash("ClimbVelocity");
     private int _isAtTopLadderParam = Animator.StringToHash("IsAtTopLadder");
     private int _isDeathParam = Animator.StringToHash("IsDeath");
+    private int _jumpDistanceToGroundParam = Animator.StringToHash("JumpDistanceToGround");
     // nps animation params
     private int _isWalkingParam = Animator.StringToHash("IsWalking");
     private int _isLookingAroundParam = Animator.StringToHash("IsLookingAround");
@@ -45,9 +46,10 @@ public class AnimationController {
         _animator.SetBool(_isSwordInHandParam, isSwordInHand);
     }
 
-    public void JumpAnimation(bool isJump)
+    public void JumpAnimation(bool isJump, float distanceToGround)
     {
         _animator.SetBool(_isJumpParam, isJump);
+        _animator.SetFloat(_jumpDistanceToGroundParam, distanceToGround);
     }
 
     public void CrouchAnimation(bool isCrouch)
@@ -125,4 +127,5 @@ public class AnimationController {
     {
         _animator.SetBool(_isDeathParam, isDeath);
     }
+
 }

@@ -4,17 +4,45 @@ using UnityEngine;
 
 public class BottomLadderTriggersController : MonoBehaviour {
 
-    public bool CharacterIsAtGround { get; set; }
+    public bool CharacterIsAtGroundLadder { get; set; }
 
     [SerializeField]
     private int _characterMaskIndex;
+    [SerializeField]
+    private HUDPanelTriggers _hudpt;
+    [SerializeField]
+    private SwordController _sword;
 
+    void Update()
+    {
+        if (CharacterIsAtGroundLadder)
+        {
+            if (_sword.IsSwordInHand)
+            {
+                _hudpt.ShowHoldingSwordPanel();
+            }
+            else
+            {
+                _hudpt.ShowActionPanel();
+            }
+        }
+        
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == _characterMaskIndex)
         {
-            CharacterIsAtGround = true;
+            if (_sword.IsSwordInHand)
+            {
+                _hudpt.ShowHoldingSwordPanel();
+            }
+            else
+            {
+                _hudpt.ShowActionPanel();
+                CharacterIsAtGroundLadder = true;
+            }
+            
         }
     }
 
@@ -22,7 +50,8 @@ public class BottomLadderTriggersController : MonoBehaviour {
     {
         if (other.gameObject.layer == _characterMaskIndex)
         {
-            CharacterIsAtGround = false;
+            CharacterIsAtGroundLadder = false;
+            _hudpt.HideTriggerPanels();
         }
     }
 }

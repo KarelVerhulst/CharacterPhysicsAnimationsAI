@@ -119,7 +119,7 @@ public class CharacterBehaviour : MonoBehaviour
 
         //animations
         _ac.MoveAnimation(_movement);
-        _ac.JumpAnimation(_jump);
+        _ac.JumpAnimation(_jump, GetJumpDistanceToGround());
         _ac.CrouchAnimation(_isCrouch);
     }
     
@@ -303,5 +303,18 @@ public class CharacterBehaviour : MonoBehaviour
             //_health--;
             _hudHealth.Health--;
         }
+    }
+    [SerializeField]
+    private LayerMask _mapLayerMask;
+
+    private float GetJumpDistanceToGround()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(this.transform.position, Vector3.down, out hit, 100, _mapLayerMask))
+        {
+            return (hit.point - this.transform.position).magnitude;
+        }
+
+        return 0;
     }
 }
