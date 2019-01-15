@@ -103,9 +103,9 @@ public class AnimationController {
         _animator.SetBool(_isAtTopLadderParam, isAtTopLadder);
     }
 
-    public bool CheckIfAnimationIsPlaying(string animationName)
+    public bool CheckIfAnimationIsPlaying(int layerIndex, string animationName)
     {
-        return _animator.GetCurrentAnimatorStateInfo(0).IsName(animationName);
+        return _animator.GetCurrentAnimatorStateInfo(layerIndex).IsName(animationName);
     }
 
     public void WalkAnimation(bool isWalking)

@@ -38,19 +38,14 @@ public class ThirdPersonCamera : MonoBehaviour {
         _v3Rotate.x = Mathf.Clamp(_v3Rotate.x, _rotationLimit.x, _rotationLimit.y);
 
         _characterPos.transform.localEulerAngles = _v3Rotate;
-
-        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("BlendTreeClimb"))
+        
+        if (_ac.CheckIfAnimationIsPlaying(0,"PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0, "PickUpObject") || _ac.CheckIfAnimationIsPlaying(0, "Blend Tree PushBox") || _ac.CheckIfAnimationIsPlaying(4, "Climb Layer.BlendTreeClimb"))
             return;
 
         //rotate camera and character horizontal
         _characterController.transform.eulerAngles += new Vector3(0, _ic.GetRightJoystickInput().x,0) * _cameraSpeed * Time.deltaTime;
-
-
         
-
-        
-
         //animation
-            _ac.RotateCameraAnimation(_ic.GetRightJoystickInput().x);
+        _ac.RotateCameraAnimation(_ic.GetRightJoystickInput().x);
     }
 }

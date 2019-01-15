@@ -524,7 +524,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 7991
+    m_Bits: 33792
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
@@ -553,7 +553,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 37571701}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2035498bba8391e4b8efcdc4238be674, type: 3}
   m_Name: 
@@ -8434,8 +8434,8 @@ GameObject:
   - component: {fileID: 756587310}
   - component: {fileID: 756587312}
   - component: {fileID: 756587311}
-  m_Layer: 15
-  m_Name: Box
+  m_Layer: 10
+  m_Name: PushBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9675,8 +9675,8 @@ GameObject:
   - component: {fileID: 1040542661}
   - component: {fileID: 1040542660}
   - component: {fileID: 1040542659}
-  m_Layer: 15
-  m_Name: PushBox
+  m_Layer: 13
+  m_Name: Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12729,7 +12729,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh4470
+  m_Name: pb_Mesh4480
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -13532,8 +13532,8 @@ GameObject:
   - component: {fileID: 1749614732}
   - component: {fileID: 1749614738}
   - component: {fileID: 1749614737}
-  m_Layer: 15
-  m_Name: Box
+  m_Layer: 10
+  m_Name: PushBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13606,8 +13606,8 @@ GameObject:
   - component: {fileID: 1762727900}
   - component: {fileID: 1762727899}
   - component: {fileID: 1762727898}
-  m_Layer: 15
-  m_Name: PushBox (2)
+  m_Layer: 13
+  m_Name: Box (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13958,8 +13958,8 @@ MonoBehaviour:
   _lookAtPosition: {fileID: 333607931}
   _hudHealth: {fileID: 1220210126}
   _startPos: {fileID: 939712573}
-  maxAngle: 25.75
-  maxRadius: 5.06
+  maxAngle: 50
+  maxRadius: 8
 --- !u!4 &1804693256
 Transform:
   m_ObjectHideFlags: 0
@@ -14444,10 +14444,10 @@ MonoBehaviour:
   _dragOnGround: 3
   _sc: {fileID: 1320888088}
   _hudHealth: {fileID: 1125184993}
-  _respawnPoint: {fileID: 1240824397}
   _mapLayerMask:
     serializedVersion: 2
     m_Bits: 32768
+  _respawnPoint: {fileID: 1240824397}
 --- !u!143 &1989012024
 CharacterController:
   m_ObjectHideFlags: 0

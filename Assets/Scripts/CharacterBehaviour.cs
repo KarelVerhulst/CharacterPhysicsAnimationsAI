@@ -10,9 +10,6 @@ public class CharacterBehaviour : MonoBehaviour
      * in this script the main for the character is used
      * like the different animation, the locomotion physics, the input controller (joystick)
      * 
-     * todo 
-     *  - refactor the phsyics in another script
-     * 
      */
      
     public bool IsGravity { get; set; }
@@ -36,10 +33,11 @@ public class CharacterBehaviour : MonoBehaviour
     private SwordController _sc;
     [SerializeField]
     private HUD _hudHealth;
+    [SerializeField]
+    private LayerMask _mapLayerMask;
 
     private CharacterController _characterController;
-
-    private Vector3 _velocity = Vector3.zero;
+    
     private Vector3 _movement;
     private bool _jump;
     private bool _isJumping;
@@ -57,10 +55,10 @@ public class CharacterBehaviour : MonoBehaviour
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
     private HeadTrigger _headTrigger;
+    private PhysicController _pc;
     
     private float _deathTimer = 0;
     
-
     // Use this for initialization
     void Start()
     {
@@ -74,130 +72,39 @@ public class CharacterBehaviour : MonoBehaviour
         //_hudHealth.Health = 10;
         IsGravity = true;
         IsDead = false;
+
+        _pc = new PhysicController(_characterController, _maxRunningSpeed, _jumpHeight);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //if (_ac.CheckIfAnimationIsPlaying(0,"PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0,"PickUpObject"))
+        //    return;
 
-        if (_hudHealth.Health <= 0)
-        {
-            IsDead = true;
-            _ac.DeathAnimation(true);
-            _deathTimer += Time.deltaTime;
-
-            if (_deathTimer >= 5f)
-            {
-                _ac.DeathAnimation(false);
-                IsDead = false;
-                this.transform.position = _respawnPoint.position;
-                _hudHealth.Health = _hudHealth.StartHealth;
-            }
-        }
-        else
-        {
-            _deathTimer = 0;
-        }
-
-        if (_ac.CheckIfAnimationIsPlaying("PushAtSwitch") || _ac.CheckIfAnimationIsPlaying("PickUpObject") || _ac.CheckIfAnimationIsPlaying("Blend Tree Climb"))
+        if (_ac.CheckIfAnimationIsPlaying(0, "PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0, "PickUpObject") || _ac.CheckIfAnimationIsPlaying(4, "Climb Layer.BlendTreeClimb"))
             return;
 
+        ApplyDeath();
+        ApplyButtonsInput();
 
         _movement = _ic.GetLeftJoystickInput();
         
-        if (_ic.IsButtonAPressed() && !_isCrouch)
-        {
-            _isJumping = true;
-        }
-
-        //Debug.Log(_headTrigger.IsInTunnel);
-        if (_ic.IsLeftJoystickButtonPressed() && !_headTrigger.IsInTunnel)
-        {
-            _isCrouch = !_isCrouch;
-            EditCharactControllerParams(_isCrouch);
-        }
-
+        _pc.PhysicUpdate(_movement, IsGravity);
+        
         //animations
         _ac.MoveAnimation(_movement);
         _ac.JumpAnimation(_jump, GetJumpDistanceToGround());
         _ac.CrouchAnimation(_isCrouch);
+        _ac.DeathAnimation(IsDead);
     }
     
     void FixedUpdate()
     {
-        //Locomotions
-        ApplyGround();
-        ApplyGravity();
-        ApplyMovement();
-        ApplyGroundDrag();
-
-        LimitMaximumRunningSpeed();
-
+        _pc.FixedPhysicUpdate(_absoluteForward, _jump, _dragOnGround, _acceleration);
+      
         ApplyJump();
-
         EditMovementFields();
-
-        DoMovement(); 
-    }
-
-    private void ApplyGravity()
-    {
-        if (IsGravity && !_characterController.isGrounded)
-        {
-            _velocity += Physics.gravity * Time.deltaTime; // g[m/s^2] * t[s]
-        }
-    }
-
-    private void ApplyGround()
-    {
-        if (_characterController.isGrounded)
-        {
-            _velocity -= Vector3.Project(_velocity, Physics.gravity);
-        }
-    }
-
-    private void ApplyMovement()
-    {
-        if (_characterController.isGrounded)
-        {
-            Vector3 relativeMovement = RelativeDirection(_movement);
-
-            _velocity += relativeMovement * _acceleration * Time.deltaTime; // F(= m.a) [m/s^2] * t [s]
-        }
-    }
-
-    private Vector3 RelativeDirection(Vector3 direction)
-    {
-        Vector3 xzForward = Vector3.Scale(_absoluteForward.forward, new Vector3(1, 0, 1));
-
-        Quaternion relativeRotation = Quaternion.LookRotation(xzForward);
-
-        return relativeRotation * direction;
-    }
-
-    private void ApplyGroundDrag()
-    {
-        if (_characterController.isGrounded)
-        {
-            _velocity = _velocity * (1 - Time.deltaTime * _dragOnGround);
-        }
-    }
-
-    private void LimitMaximumRunningSpeed()
-    {
-        Vector3 yVelocity = Vector3.Scale(_velocity, new Vector3(0, 1, 0));
-        Vector3 xzVelocity = Vector3.Scale(_velocity, new Vector3(1, 0, 1));
-
-        Vector3 clampedXzVelocity = Vector3.ClampMagnitude(xzVelocity, _maxRunningSpeed);
-
-        _velocity = yVelocity + clampedXzVelocity;
-    }
-
-    private void DoMovement()
-    {
-        Vector3 displacement = _velocity  * Time.deltaTime;
-        
-        _characterController.Move(displacement);
     }
 
     private void ApplyJump()
@@ -205,8 +112,7 @@ public class CharacterBehaviour : MonoBehaviour
         if (_isJumping && _characterController.isGrounded)
         {
             _jump = true;
-
-            _velocity += -Physics.gravity.normalized * Mathf.Sqrt(2 * Physics.gravity.magnitude * _jumpHeight);
+            
             _isJumping = false;
         }
         else
@@ -214,7 +120,7 @@ public class CharacterBehaviour : MonoBehaviour
             _jump = false;
         }
     }
-    
+
     private void EditCharactControllerParams(bool controlObject)
     {
         // edit the the charactercontroller collider 
@@ -244,7 +150,7 @@ public class CharacterBehaviour : MonoBehaviour
          */
         if (_characterController.isGrounded)
         {
-            ResetVelocity();
+            //ResetVelocity();
             if (!_isCrouch)
             {
                 if (_movement.magnitude <= 0.6)
@@ -286,26 +192,26 @@ public class CharacterBehaviour : MonoBehaviour
         }
     }
 
-    private void ResetVelocity()
+    private void ApplyDeath()
     {
-        if (_movement.magnitude <= 0.1) //if joystick is not used character stop immediately set _velocity to 0
+        if (_hudHealth.Health <= 0)
         {
-            _velocity.x = 0;
-            _velocity.z = 0;
-        }
-    }
+            IsDead = true;
+            _deathTimer += Time.deltaTime;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == 12)
+            if (_deathTimer >= 5f)
+            {
+                _ac.DeathAnimation(false);
+                IsDead = false;
+                this.transform.position = _respawnPoint.position;
+                _hudHealth.Health = _hudHealth.StartHealth;
+            }
+        }
+        else
         {
-            Debug.Log("hit npc");
-            //_health--;
-            _hudHealth.Health--;
+            _deathTimer = 0;
         }
     }
-    [SerializeField]
-    private LayerMask _mapLayerMask;
 
     private float GetJumpDistanceToGround()
     {
@@ -317,4 +223,32 @@ public class CharacterBehaviour : MonoBehaviour
 
         return 0;
     }
+
+    private void ApplyButtonsInput()
+    {
+        // use to jump
+        if (_ic.IsButtonAPressed() && !_isCrouch)
+        {
+            _isJumping = true;
+        }
+        //use to crouch
+        if (_ic.IsLeftJoystickButtonPressed() && !_headTrigger.IsInTunnel)
+        {
+            _isCrouch = !_isCrouch;
+            EditCharactControllerParams(_isCrouch);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 12)
+        {
+            //Debug.Log("hit npc");
+            //_health--;
+            _hudHealth.Health--;
+        }
+    }
+
+
+    
 }
