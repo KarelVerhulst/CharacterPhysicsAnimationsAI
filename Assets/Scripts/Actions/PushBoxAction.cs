@@ -90,7 +90,7 @@ public class PushBoxAction : MonoBehaviour {
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
-
+        
         // no rigidbody
         if (body == null || body.isKinematic)
         {

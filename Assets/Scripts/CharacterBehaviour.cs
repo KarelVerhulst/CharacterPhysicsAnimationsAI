@@ -34,6 +34,8 @@ public class CharacterBehaviour : MonoBehaviour
     private HUD _hudHealth;
     [SerializeField]
     private LayerMask _mapLayerMask;
+    [SerializeField]
+    private BoxCollider _swordCollider;
 
     private CharacterController _characterController;
     
@@ -194,12 +196,13 @@ public class CharacterBehaviour : MonoBehaviour
         if (_hudHealth.Health <= 0)
         {
             IsDead = true;
+            _swordCollider.enabled = false;
             _deathTimer += Time.deltaTime;
 
             if (_deathTimer >= 5f)
             {
-                _ac.DeathAnimation(false);
                 IsDead = false;
+                _swordCollider.enabled = true;
                 this.transform.position = _respawnPoint.position;
                 _hudHealth.Health = _hudHealth.StartHealth;
             }

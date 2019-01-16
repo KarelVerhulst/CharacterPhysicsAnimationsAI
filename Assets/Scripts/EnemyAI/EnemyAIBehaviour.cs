@@ -13,12 +13,12 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private Transform _lookAtPosition;
     [SerializeField]
     private HUD _hudHealth;
-
-    //field of view
     [SerializeField]
-    private Transform _startPos;
+    private BoxCollider _swordCollider;
+    [SerializeField]
+    private bool _isSecondNPC;
     
-    //other
+    //extern script + root node
     private INode _rootNode;
     private NavMeshAgent _npc;
     private Animator _animator;
@@ -41,16 +41,23 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private float _deathTimer = 0;
     private bool _isDeath = false;
 
-    //health npc
-    //private int _health = 10;
-
     // Use this for initialization
     void Start () {
         _npc = this.GetComponent<NavMeshAgent>();
         _animator = this.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
         _timer = _standDefault;
-        _destPoint = Random.Range(0, _waypoints.Length - 1);
+
+        if (_isSecondNPC)
+        {
+            
+                _destPoint = Random.Range(4, _waypoints.Length - 1);
+        }
+        else
+        {
+            _destPoint = Random.Range(0, 3);
+        }
+        
 
         SetupRoot();
 
@@ -62,13 +69,14 @@ public class EnemyAIBehaviour : MonoBehaviour {
         if (_hudHealth.Health <= 0)
         {
             _isDeath = true;
-            Debug.Log("dead");
+            _swordCollider.enabled = false; // hide collider so that the sword cannot doe extra damage if he use the death animation
             _ac.DeathAnimation(true);
             _ac.FightAnimation(false);
             _deathTimer += Time.deltaTime;
 
             if (_deathTimer >= 5f)
             {
+                _swordCollider.enabled = true;
                 _ac.DeathAnimation(false);
                 this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
                 _hudHealth.Health = _hudHealth.StartHealth;
@@ -76,10 +84,6 @@ public class EnemyAIBehaviour : MonoBehaviour {
                 _isDeath = false;
                 _deathTimer = 0;
             }
-
-            // this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
-            // _hudHealth.Health = _hudHealth.StartHealth;
-            //_isCharacterHittingOnMe = false;
         }
         else
         {
@@ -88,7 +92,6 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         if (_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
-            Debug.Log("character is dead");
             _isCharacterHittingOnMe = false;
         }
     }
@@ -103,7 +106,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
         if (other.gameObject.layer == 11)
         {
             _isCharacterHittingOnMe = true;
-            Debug.Log(other.gameObject.layer);
+            //Debug.Log(other.gameObject.layer);
             _hudHealth.Health--;
         }
     }
@@ -112,7 +115,15 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         while (Application.isPlaying)
         {
-            yield return _rootNode.Tick();
+            if (!_isDeath)
+            {
+                yield return _rootNode.Tick();
+            }
+            else
+            {
+                yield return NodeResult.Success;
+            }
+            
         }
     }
 
@@ -126,7 +137,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
                 NPCAction()
             );
     }
-
+   
     // Sequences
     private INode LookForCharacter()
     {
@@ -185,7 +196,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         isInFov = inFOV(transform, _character, maxAngle, maxRadius);
 
-        if (isInFov && !_isDeath && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
+        if (isInFov && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
             //Debug.Log("focus on character");
             //Debug.Log("IsCharacterInRange TRUE");
@@ -196,7 +207,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
             if (_isCharacterHittingOnMe)
             {
                // Debug.Log(_isCharacterHittingOnMe);
-                Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
+                Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 1f, 0.0f);
                 this.transform.rotation = Quaternion.LookRotation(newDirection);
             }
             else
@@ -329,7 +340,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     {
         //Debug.Log("Stare add animation that rotate");
         //rotate the npc so he idle with his face to the playfield and not agains the wall
-        if (_destPoint == 0 || _destPoint == 4 || _destPoint == 6)
+        if (_destPoint == 0 || _destPoint == 3 || _destPoint == 4 || _destPoint == 6)
         {
             Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _lookAtPosition.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
             this.transform.rotation = Quaternion.LookRotation(newDirection);

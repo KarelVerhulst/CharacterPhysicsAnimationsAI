@@ -5,6 +5,10 @@ using UnityEngine.AI;
 
 public class UpdateNavMesh : MonoBehaviour {
 
+    /*
+     * if you want to use this script you have to use the navigation-static on the objects that not moves
+     * https://docs.unity3d.com/Manual/nav-BuildingNavMesh.html
+     */
     [SerializeField]
     private NavMeshSurface[] _surfaces;
 
