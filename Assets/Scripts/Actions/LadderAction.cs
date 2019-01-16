@@ -30,13 +30,14 @@ public class LadderAction : MonoBehaviour {
         IsCharacterReadyToClimb = false;
         _charAnimator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_charAnimator);
-        _charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder,_char, this.GetComponent<LadderAction>());
+        //_charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder, _char, this.GetComponent<LadderAction>());
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (_ic.IsButtonXPressed() && !_sword.IsSwordInHand && _bltc.CharacterIsAtGroundLadder)
         {
+            _charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder, _char, this.GetComponent<LadderAction>());
             IsCharacterReadyToClimb = !IsCharacterReadyToClimb;
 
             RotateAndPositionCharacterToLadder();

@@ -8,8 +8,7 @@ public class CharacterBehaviour : MonoBehaviour
     /*
      * the main script for the character
      * in this script the main for the character is used
-     * like the different animation, the locomotion physics, the input controller (joystick)
-     * 
+     * like the different animation, the locomotion physics, the input controller (joystick) 
      */
      
     public bool IsGravity { get; set; }
@@ -79,9 +78,6 @@ public class CharacterBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (_ac.CheckIfAnimationIsPlaying(0,"PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0,"PickUpObject"))
-        //    return;
-
         if (_ac.CheckIfAnimationIsPlaying(0, "PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0, "PickUpObject") || _ac.CheckIfAnimationIsPlaying(4, "Climb Layer.BlendTreeClimb"))
             return;
 
@@ -91,7 +87,7 @@ public class CharacterBehaviour : MonoBehaviour
         _movement = _ic.GetLeftJoystickInput();
         
         _pc.PhysicUpdate(_movement, IsGravity);
-        
+
         //animations
         _ac.MoveAnimation(_movement);
         _ac.JumpAnimation(_jump, GetJumpDistanceToGround());
@@ -107,6 +103,7 @@ public class CharacterBehaviour : MonoBehaviour
         EditMovementFields();
     }
 
+    //private methods
     private void ApplyJump()
     {
         if (_isJumping && _characterController.isGrounded)
@@ -248,7 +245,4 @@ public class CharacterBehaviour : MonoBehaviour
             _hudHealth.Health--;
         }
     }
-
-
-    
 }

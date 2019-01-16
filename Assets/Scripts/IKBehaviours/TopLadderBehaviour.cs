@@ -41,16 +41,17 @@ public class TopLadderBehaviour : StateMachineBehaviour {
     override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //IK
-        if (stateInfo.normalizedTime < .35f)
+        if (stateInfo.normalizedTime < .6f)
             _iKWeight = Mathf.Lerp(_iKWeight, 1, .5f);
         else
         {
             _iKWeight = Mathf.Lerp(_iKWeight, 0, .5f);
         }
+
         //animator.SetBoneLocalRotation(HumanBodyBones.Spine, Quaternion.Euler(new Vector3(20, 0, 0)));
 
         animator.SetIKPosition(AvatarIKGoal.RightHand, _rightHandLadder.position);
-        //animator.SetIKRotation(AvatarIKGoal.RightHand, _rightHandLadder.rotation); //-> hand doet raar als dit aanstaat
+       // animator.SetIKRotation(AvatarIKGoal.RightHand, _rightHandLadder.rotation); //-> hand doet raar als dit aanstaat
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, _iKWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, _iKWeight);
 
