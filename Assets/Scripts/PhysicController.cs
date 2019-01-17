@@ -4,22 +4,19 @@ using UnityEngine;
 
 public class PhysicController {
 
-    //fields for constructor
-    private CharacterController _characterController;
-    
-    private float _maxRunningSpeed = (30.0f * 1000) / (60 * 60); // [m/s], 30km/h
-    private float _jumpHeight = 1f;
-    private float _dragOnGround = 3f;
-    private float _acceleration = 3; // [m/s^2]
+    /*
+     * All the physics from the character is found in this script
+     */
 
-    //normal fields
+    private CharacterController _characterController;
+    private float _maxRunningSpeed; // [m/s], 30km/h
+    private float _jumpHeight;
+    private float _dragOnGround;
+    private float _acceleration; // [m/s^2]
     private bool _isGravity;
     private Transform _absoluteForward;
     private Vector3 _velocity = Vector3.zero;
     private Vector3 _movement;
-
-    float currentHeight;
-    Vector3 currentCenter;
 
     //constructor
     public PhysicController(CharacterController characterController, float maxRunningSpeed, float jumpHeight)

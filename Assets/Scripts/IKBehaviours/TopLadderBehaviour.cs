@@ -6,10 +6,11 @@ public class TopLadderBehaviour : StateMachineBehaviour {
 
     private Transform _rightHandLadder;
     private GameObject _character;
-    private AnimationController _ac;
     private Transform _characterTopPosition;
     private LadderAction _la;
     private float _iKWeight = 0;
+
+    private AnimationController _ac;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

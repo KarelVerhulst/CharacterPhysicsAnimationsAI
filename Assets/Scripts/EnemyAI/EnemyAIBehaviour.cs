@@ -18,13 +18,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
     [SerializeField]
     private bool _isSecondNPC;
     
-    //extern script + root node
     private INode _rootNode;
-    private NavMeshAgent _npc;
-    private Animator _animator;
-
-    private AnimationController _ac;
-    
     private int _destPoint;
     private float _walkingspeed = (5.0f * 1000) / (60 * 60); //https://en.wikipedia.org/wiki/Preferred_walking_speed
 
@@ -41,23 +35,19 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private float _deathTimer = 0;
     private bool _isDeath = false;
 
+    //extern script
+    private NavMeshAgent _npc;
+    private Animator _animator;
+    private AnimationController _ac;
+
     // Use this for initialization
     void Start () {
         _npc = this.GetComponent<NavMeshAgent>();
         _animator = this.GetComponent<Animator>();
         _ac = new AnimationController(_animator);
         _timer = _standDefault;
-
-        if (_isSecondNPC)
-        {
-            
-                _destPoint = Random.Range(4, _waypoints.Length - 1);
-        }
-        else
-        {
-            _destPoint = Random.Range(0, 3);
-        }
         
+        SetupStartPositionNPC();
 
         SetupRoot();
 
@@ -66,51 +56,15 @@ public class EnemyAIBehaviour : MonoBehaviour {
     
     // Update is called once per frame
     void Update () {
-        if (_hudHealth.Health <= 0)
-        {
-            _isDeath = true;
-            _swordCollider.enabled = false; // hide collider so that the sword cannot doe extra damage if he use the death animation
-            _ac.DeathAnimation(true);
-            _ac.FightAnimation(false);
-            _deathTimer += Time.deltaTime;
-
-            if (_deathTimer >= 5f)
-            {
-                _swordCollider.enabled = true;
-                _ac.DeathAnimation(false);
-                this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
-                _hudHealth.Health = _hudHealth.StartHealth;
-                _isCharacterHittingOnMe = false;
-                _isDeath = false;
-                _deathTimer = 0;
-            }
-        }
-        else
-        {
-           
-        }
-
+        ApplyDeath();
+        
+        //if the character is dying you can stop fighting with it and move on
         if (_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
             _isCharacterHittingOnMe = false;
         }
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        /*
-         * https://docs.unity3d.com/Manual/nav-MixingComponents.html
-         * add charactercontroller or collider with rigidbody
-         * otherwise this code will not excecute
-         */
-        if (other.gameObject.layer == 11)
-        {
-            _isCharacterHittingOnMe = true;
-            //Debug.Log(other.gameObject.layer);
-            _hudHealth.Health--;
-        }
-    }
-
+    
     IEnumerator RunTree()
     {
         while (Application.isPlaying)
@@ -198,15 +152,12 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         if (isInFov && !_character.gameObject.GetComponent<CharacterBehaviour>().IsDead)
         {
-            //Debug.Log("focus on character");
-            //Debug.Log("IsCharacterInRange TRUE");
             return true;
         }
         else
         {
             if (_isCharacterHittingOnMe)
             {
-               // Debug.Log(_isCharacterHittingOnMe);
                 Vector3 newDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 1f, 0.0f);
                 this.transform.rotation = Quaternion.LookRotation(newDirection);
             }
@@ -216,23 +167,19 @@ public class EnemyAIBehaviour : MonoBehaviour {
             }
             
             _ac.FightAnimation(false);
-            //Debug.Log("go to next node");
-            // Debug.Log("IsCharacterInRange FALSE");
+        
             return false;
         }
     }
 
     private bool IsCloseToCharacter()
     {
-        
         if (Vector3.Distance(this.transform.position, _character.position) < 1.3f)
         {
-           // Debug.Log("isCloseTocharacter TRUE");
             return true;
         }
         else
         {
-            //Debug.Log("isCloseTocharacter FALSE");
             return false;
         }
     }
@@ -250,15 +197,13 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
             if (_timer <= 5.0f)
             {
-                //Debug.Log("isNPC at point TIMER < 5 FALSE");
                 return false;
             }
-           // Debug.Log("isNPC at point");
+
             return true; //stile stare
         }
         else
         {
-            //Debug.Log("isNPC at point REMAININGDISTANCE < 0.1f FALSE");
             return false;
         }
     }
@@ -270,17 +215,15 @@ public class EnemyAIBehaviour : MonoBehaviour {
         {
             _timer = _standDefault;
             _destPoint = (_destPoint + 1) % _waypoints.Length;
-            //Debug.Log("Is timer running TIMER < 5 FALSE");
+
             return false;
         }
         else if(_npc.remainingDistance < 0.1f)
         {
-            //Debug.Log("Is timer running TRUE");
             return true; //still idle
         }
         else
         {
-            //Debug.Log("Is timer running ELSE FALSE");
             return false;
         }
         
@@ -288,16 +231,11 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
     private bool IsTimerReset()
     {
-        //Debug.Log("npc != waypointsposition | " + (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x));
-       // Debug.Log("_timer == standdefault | " + (_timer == _standDefault));
-       // Debug.Log(_timer);
-
         if (_npc.pathEndPosition.x != _waypoints[_destPoint].position.x) //&& _timer == _standDefault 
         {
-           // Debug.Log("istimerReset TRUE");
             return true;
         }
-        //Debug.Log("istimerReset FALSE");
+        
         return false;
     }
 
@@ -305,14 +243,6 @@ public class EnemyAIBehaviour : MonoBehaviour {
     private IEnumerator<NodeResult> Focus()
     {
         //Debug.Log("Focus");
-
-        //_npc.speed = 0;
-        //_ac.WalkAnimation(false);
-        //_ac.LookAroundAnimation(true);
-
-        //Vector3 characterDirection = Vector3.RotateTowards(this.transform.forward, _character.position - this.transform.position, 2f * Time.deltaTime, 0.0f);
-        //this.transform.rotation = Quaternion.LookRotation(characterDirection);
-
         yield return NodeResult.Success; //go to walk to character
     }
 
@@ -365,7 +295,56 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
         yield return NodeResult.Success;
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        /*
+         * https://docs.unity3d.com/Manual/nav-MixingComponents.html
+         * add charactercontroller or collider with rigidbody
+         * otherwise this code will not excecute
+         */
+        if (other.gameObject.layer == 11)
+        {
+            _isCharacterHittingOnMe = true;
+            _hudHealth.Health--;
+        }
+    }
+
+    private void SetupStartPositionNPC()
+    {
+        if (_isSecondNPC) // for now the 2 npc can t spawn at the same spawnpoint
+        {
+            _destPoint = Random.Range(4, _waypoints.Length - 1);
+        }
+        else
+        {
+            _destPoint = Random.Range(0, 3);
+        }
+    }
+
+    private void ApplyDeath()
+    {
+        if (_hudHealth.Health <= 0)
+        {
+            _isDeath = true;
+            _swordCollider.enabled = false; // hide collider so that the sword cannot doe extra damage if he use the death animation
+            _ac.DeathAnimation(true);
+            _ac.FightAnimation(false);
+            _deathTimer += Time.deltaTime;
+
+            if (_deathTimer >= 5f)
+            {
+                _swordCollider.enabled = true;
+                _ac.DeathAnimation(false);
+                this.transform.position = _waypoints[Random.Range(0, _waypoints.Length - 1)].position;
+                _hudHealth.Health = _hudHealth.StartHealth;
+                _isCharacterHittingOnMe = false;
+                _isDeath = false;
+                _deathTimer = 0;
+            }
+        }
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
@@ -388,7 +367,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
         Gizmos.DrawRay(transform.position, transform.forward * maxRadius);
     }
     
-    public static bool inFOV(Transform checkingObject, Transform target, float maxAngle, float maxRadius)
+    private bool inFOV(Transform checkingObject, Transform target, float maxAngle, float maxRadius)
     {
         // https://www.youtube.com/watch?v=BJPSiWNZVow
         Collider[] overlaps = new Collider[100];
@@ -409,7 +388,7 @@ public class EnemyAIBehaviour : MonoBehaviour {
                     directionBetween.y *= 0;
 
                     float angle = Vector3.Angle(checkingObject.forward, directionBetween);
-                   // Debug.Log(angle);
+                  
                     if (angle <= maxAngle)
                     {
                         Ray ray = new Ray(checkingObject.position, target.position - checkingObject.position);
@@ -417,8 +396,6 @@ public class EnemyAIBehaviour : MonoBehaviour {
 
                         if (Physics.Raycast(ray, out hit, maxRadius))
                         {
-                            //Debug.Log("hit  " + hit.transform.tag);
-                            //Debug.Log("target  " + target.tag);
                             if (hit.transform.tag == target.tag)
                                 return true;
 

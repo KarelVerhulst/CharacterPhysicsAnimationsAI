@@ -14,16 +14,12 @@ public class CharacterBehaviour : MonoBehaviour
     public bool IsGravity { get; set; }
     public bool IsDead { get; set; }
 
-    //locomotion
     [SerializeField]
     private float _acceleration = 3; // [m/s^2]
-
-    //dependencies
     [SerializeField]
     private Transform _absoluteForward;
     [SerializeField]
     private float _maxRunningSpeed = (30.0f * 1000) / (60 * 60); // [m/s], 30km/h
-
     [SerializeField]
     private float _jumpHeight = 1f;
     [SerializeField]
@@ -36,21 +32,18 @@ public class CharacterBehaviour : MonoBehaviour
     private LayerMask _mapLayerMask;
     [SerializeField]
     private BoxCollider _swordCollider;
+    [SerializeField]
+    private Transform _respawnPoint;
 
     private CharacterController _characterController;
-    
+    private AnimatorStateInfo _aStateInfo;
     private Vector3 _movement;
     private bool _jump;
     private bool _isJumping;
     private bool _isCrouch;
-    private AnimatorStateInfo _aStateInfo;
-
-    float currentHeight;
-    Vector3 currentCenter;
-
-   // private int _health = 15;
-    [SerializeField]
-    private Transform _respawnPoint;
+    private float _currentHeight;
+    private Vector3 _currentCenter;
+    private float _deathTimer = 0;
 
     //externe scripts
     private InputController _ic = InputController.Instance();
@@ -58,19 +51,16 @@ public class CharacterBehaviour : MonoBehaviour
     private HeadTrigger _headTrigger;
     private PhysicController _pc;
     
-    private float _deathTimer = 0;
-    
     // Use this for initialization
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _ac = new AnimationController(this.GetComponent<Animator>());
 
-        currentHeight = _characterController.height;
-        currentCenter = _characterController.center;
+        _currentHeight = _characterController.height;
+        _currentCenter = _characterController.center;
 
         _headTrigger = GetComponent<HeadTrigger>();
-        //_hudHealth.Health = 10;
         IsGravity = true;
         IsDead = false;
 
@@ -80,6 +70,7 @@ public class CharacterBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if animation is playing you can't walk otherwise it looks weird if your character is pushing a button but can move away from it
         if (_ac.CheckIfAnimationIsPlaying(0, "PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0, "PickUpObject") || _ac.CheckIfAnimationIsPlaying(4, "Climb Layer.BlendTreeClimb"))
             return;
 
@@ -120,22 +111,18 @@ public class CharacterBehaviour : MonoBehaviour
         }
     }
 
-    private void EditCharactControllerParams(bool controlObject)
+    private void EditCharactControllerHeightCenter(bool controlObject)
     {
         // edit the the charactercontroller collider 
-        /*
-         * todo change the if else to switch because the values are different for example crouch and stand
-         */
-
         if (controlObject)
         {
             _characterController.height = 1.3f;
             _characterController.center = new Vector3(0, .7f, 0);
         }
-        else
+        else //use the default params
         {
-            _characterController.height = currentHeight;
-            _characterController.center = currentCenter;
+            _characterController.height = _currentHeight;
+            _characterController.center = _currentCenter;
         }
     }
 
@@ -149,8 +136,12 @@ public class CharacterBehaviour : MonoBehaviour
          */
         if (_characterController.isGrounded)
         {
-            //ResetVelocity();
-            if (!_isCrouch)
+            if (_isCrouch) //you are in the crouch statement
+            {
+                _acceleration = 15;
+                _dragOnGround = 10;
+            }
+            else 
             {
                 if (_movement.magnitude <= 0.6)
                 {
@@ -163,30 +154,25 @@ public class CharacterBehaviour : MonoBehaviour
                 }
                 else
                 {
-                    _acceleration = 20;
+                    _acceleration = 25;
                     _dragOnGround = 5;
                 }
 
                 bool isMoveSkewForward = (_movement.normalized.x > 0 && _movement.normalized.z > 0) || (_movement.normalized.x < 0 && _movement.normalized.z > 0);
                 bool isMoveSkewBackward = (_movement.normalized.x > 0 && _movement.normalized.z < 0) || (_movement.normalized.x < 0 && _movement.normalized.z < 0);
 
-                if (isMoveSkewForward && _sc.IsSwordInHand)
+                if (isMoveSkewForward)
                 {
-                    _acceleration = 12;
+                    _acceleration = 20;
                     _dragOnGround = 5;
                     //Debug.Log("schuin voorwaarts");
                 }
                 else if (isMoveSkewBackward)
                 {
-                    _acceleration = 10;
+                    _acceleration = 12;
                     _dragOnGround = 5;
                     //Debug.Log("schuin achterwaart");
                 }
-            }
-            else //you are in the crouch statement
-            {
-                _acceleration = 15;
-                _dragOnGround = 10;
             }
         }
     }
@@ -235,7 +221,7 @@ public class CharacterBehaviour : MonoBehaviour
         if (_ic.IsLeftJoystickButtonPressed() && !_headTrigger.IsInTunnel)
         {
             _isCrouch = !_isCrouch;
-            EditCharactControllerParams(_isCrouch);
+            EditCharactControllerHeightCenter(_isCrouch);
         }
     }
 
@@ -243,8 +229,6 @@ public class CharacterBehaviour : MonoBehaviour
     {
         if (other.gameObject.layer == 12)
         {
-            //Debug.Log("hit npc");
-            //_health--;
             _hudHealth.Health--;
         }
     }

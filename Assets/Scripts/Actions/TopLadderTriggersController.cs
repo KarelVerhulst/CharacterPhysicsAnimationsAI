@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class TopLadderTriggersController : MonoBehaviour {
 
+    /*
+     * check if the character is at the top of the ladder
+     */
+
     public bool CharacterIsAtTop { get; set; }
 
     [SerializeField]

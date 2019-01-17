@@ -7,9 +7,10 @@ public class PickUpSword : StateMachineBehaviour {
     private Transform _rightHand;
     private AnimationController _ac;
     private GameObject _sword;
+    private float _iKWeight;
+
     private HUDPanelTriggers _hudPaneltrigger;
     private SwordController _sc;
-    private float _iKWeight;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

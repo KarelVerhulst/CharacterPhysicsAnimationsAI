@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
 public class InputController {
+    /*
+     *  All the input from the controllers are coded in this file
+     */
 
     private static InputController _instance;
 
@@ -15,10 +18,7 @@ public class InputController {
     }
 
     private InputController(){}
-    /*
-     *  All the input from the controllers are coded in this file
-     */
-
+    
     public Vector3 GetLeftJoystickInput()
     {
         float h = Input.GetAxis("Xbox_LeftJoystickHorizontal");

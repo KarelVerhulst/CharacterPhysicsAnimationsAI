@@ -14,28 +14,17 @@ public class SwordAction : MonoBehaviour {
     private GameObject _sword;
     [SerializeField]
     private HUDPanelTriggers _hudpt;
+    [SerializeField]
+    private string _actionText;
 
     private bool _isCharacterInTriggerBox = false;
     private int _playerLayer = 9;
-
     private Animator _animator;
 
+    //externe scripts
     private InputController _ic = InputController.Instance();
-    private static SwordAction _instance;
     private AnimationController _ac;
     
-
-    public static SwordAction Instance()
-    {
-        if (_instance == null)
-        {
-            _instance = new SwordAction();
-        }
-
-        return _instance;
-    }
-    
-
     // Use this for initialization
     void Start () {
         _animator = _char.GetComponent<Animator>();
@@ -52,6 +41,10 @@ public class SwordAction : MonoBehaviour {
             _char.rotation = Quaternion.Euler(Vector3.zero);
 
             _ac.PickupObjectAnimation(true);
+
+            _hudpt.HideTriggerPanels();
+            this.gameObject.GetComponent<BoxCollider>().enabled = false;
+            _isCharacterInTriggerBox = false;
         }
         else
         {
@@ -66,21 +59,8 @@ public class SwordAction : MonoBehaviour {
     {
         if (other.gameObject.layer == _playerLayer)
         {
-            _hudpt.ShowActionPanel();
+            _hudpt.ShowActionPanel(_actionText);
             _isCharacterInTriggerBox = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == _playerLayer)
-        {
-            _hudpt.HideTriggerPanels();
-            _isCharacterInTriggerBox = false;
-            if (_sword.GetComponent<SwordController>().IsSwordInHand)
-            {
-                this.gameObject.GetComponent<BoxCollider>().enabled = false;
-            }
         }
     }
 }

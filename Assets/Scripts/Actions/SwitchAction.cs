@@ -14,6 +14,8 @@ public class SwitchAction : MonoBehaviour {
     private HUDPanelTriggers _hudpt;
     [SerializeField]
     private SwordController _sword;
+    [SerializeField]
+    private string _actionText;
 
     private int _playerLayer = 9;
     private bool _isCharacterInTriggerBox;
@@ -32,23 +34,12 @@ public class SwitchAction : MonoBehaviour {
         
         if (_isCharacterInTriggerBox && _ic.IsButtonXPressed())
         {
+            _hudpt.HideTriggerPanels();
             _ac.PushButtonAnimation(true);
         }
         else
         {
             _ac.PushButtonAnimation(false);
-        }
-
-        if (_isCharacterInTriggerBox)
-        {
-            if (_sword.IsSwordInHand)
-            {
-                _hudpt.ShowHoldingSwordPanel();
-            }
-            else
-            {
-                _hudpt.ShowActionPanel();
-            }
         }
     }
 
@@ -62,7 +53,7 @@ public class SwitchAction : MonoBehaviour {
             }
             else
             {
-                _hudpt.ShowActionPanel();
+                _hudpt.ShowActionPanel(_actionText);
                 _isCharacterInTriggerBox = true;
             }
         }

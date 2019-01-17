@@ -7,6 +7,8 @@ public class HUD : MonoBehaviour
 {
     /*
      * https://www.youtube.com/watch?v=g03gH-uDuqU
+     * for now this hud is only showing the health bar
+     * later you can add for example mana bar or stamina bar ...
      */
     public float Health { get; set; }
 

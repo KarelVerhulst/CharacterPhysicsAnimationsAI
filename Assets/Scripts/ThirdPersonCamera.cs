@@ -21,9 +21,11 @@ public class ThirdPersonCamera : MonoBehaviour {
     [SerializeField]
     private GameObject _character;
     
-    private CharacterController _characterController;
     private Vector3 _v3Rotate = Vector3.zero;
     private Vector2 _rotationLimit = new Vector2(-20, 40);
+    
+    //externe scripts
+    private CharacterController _characterController;
     private InputController _ic = InputController.Instance();
     private AnimationController _ac;
 
@@ -46,6 +48,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 
         _characterPos.transform.localEulerAngles = _v3Rotate;
 
+        //when animation is playing you can't rotate horizontal, only vertical
         if (_ac.CheckIfAnimationIsPlaying(0,"PushAtSwitch") || _ac.CheckIfAnimationIsPlaying(0, "PickUpObject") || _ac.CheckIfAnimationIsPlaying(0, "Blend Tree PushBox") || _ac.CheckIfAnimationIsPlaying(4, "Climb Layer.BlendTreeClimb"))
             return;
 

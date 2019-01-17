@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class BottomLadderTriggersController : MonoBehaviour {
 
+    /*
+     * check if the character is at the bottom of the ladder
+     * show the correct panel
+     */
+
     public bool CharacterIsAtGroundLadder { get; set; }
 
     [SerializeField]
@@ -12,6 +17,8 @@ public class BottomLadderTriggersController : MonoBehaviour {
     private HUDPanelTriggers _hudpt;
     [SerializeField]
     private SwordController _sword;
+    [SerializeField]
+    private string _actionText;
 
     void Update()
     {
@@ -23,7 +30,7 @@ public class BottomLadderTriggersController : MonoBehaviour {
             }
             else
             {
-                _hudpt.ShowActionPanel();
+                _hudpt.ShowActionPanel(_actionText);
             }
         }
         
@@ -39,7 +46,7 @@ public class BottomLadderTriggersController : MonoBehaviour {
             }
             else
             {
-                _hudpt.ShowActionPanel();
+                _hudpt.ShowActionPanel(_actionText);
                 CharacterIsAtGroundLadder = true;
             }
             

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class LadderAction : MonoBehaviour {
 
+    /*
+     *  the main of the climbing a ladder
+     */
+
     public  bool IsCharacterReadyToClimb { get; set; }
 
     [SerializeField]
@@ -30,7 +34,6 @@ public class LadderAction : MonoBehaviour {
         IsCharacterReadyToClimb = false;
         _charAnimator = _char.GetComponent<Animator>();
         _ac = new AnimationController(_charAnimator);
-        //_charAnimator.GetBehaviour<TopLadderBehaviour>().SetBehaviourFields(_rightHandLadder, _char, this.GetComponent<LadderAction>());
     }
 	
 	// Update is called once per frame
@@ -56,7 +59,6 @@ public class LadderAction : MonoBehaviour {
         }
     }
     
-
     private void RotateAndPositionCharacterToLadder()
     {
         _char.transform.position = _startPoint.position;

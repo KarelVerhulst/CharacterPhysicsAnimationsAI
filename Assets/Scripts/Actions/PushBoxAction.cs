@@ -10,8 +10,9 @@ public class PushBoxAction : MonoBehaviour {
     private SwordController _sword;
     [SerializeField]
     private HUDPanelTriggers _hudpt;
-
-
+    [SerializeField]
+    private string _actionText;
+    
     private Animator _animator;
     private CharacterController _charController;
     private float _currentCharControllerRadius;
@@ -39,6 +40,7 @@ public class PushBoxAction : MonoBehaviour {
         if (_isCharacterInTrigger && _ic.IsButtonXPressed() && !_sword.IsSwordInHand)
         {
             _isPushing = !_isPushing;
+            _hudpt.HideTriggerPanels();
 
             if (_isPushing)
             {
@@ -71,7 +73,7 @@ public class PushBoxAction : MonoBehaviour {
             }
             else
             {
-                _hudpt.ShowActionPanel();
+                _hudpt.ShowActionPanel(_actionText);
                 _isCharacterInTrigger = true;
             }
         }

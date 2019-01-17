@@ -16,7 +16,6 @@ public class UpdateNavMesh : MonoBehaviour {
     private int _playerLayer = 9;
     private bool _isPlayerInAIArea = false;
     
-
     // Use this for initialization
     void Start () {
         /*
@@ -28,17 +27,12 @@ public class UpdateNavMesh : MonoBehaviour {
          */
         StartCoroutine(UpdateNavMeshAfterXSeconds());
     }
-	
-	// Update is called once per frame
-	void Update () {
-        
-    }
 
     IEnumerator UpdateNavMeshAfterXSeconds()
     {
         while (true)
         {
-            if (_isPlayerInAIArea)
+            if (_isPlayerInAIArea) // only do this if the character is in the AI zone
             {
                 for (int i = 0; i < _surfaces.Length; i++)
                 {

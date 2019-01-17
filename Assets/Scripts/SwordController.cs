@@ -28,14 +28,14 @@ public class SwordController : MonoBehaviour {
     private bool _isWeaponArmed = true;
     private bool _characterHaveSword;
     private bool _isSwordAtBack;
-
-    private InputController _ic = InputController.Instance();
-    private AnimationController _ac;
-    
     private float _timer;
     private bool _isDisArmTrue;
     private bool _setMeleeActive;
 
+    //externe scripts
+    private InputController _ic = InputController.Instance();
+    private AnimationController _ac;
+    
     // Use this for initialization
     void Start () {
         _transform = this.transform;
@@ -47,6 +47,29 @@ public class SwordController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        ApplySwordBehaviour();
+
+        SetTransformOffSwordOnCharacter();
+
+        ApplyMeleeAttack();
+        
+        //animation
+        _ac.AttackMeleeAnimation(_setMeleeActive);
+    }
+
+    public void TakeSword(Transform parent)
+    {
+        _transform.parent = parent;
+        _transform.localPosition = _localSwordPosition;
+        _transform.localEulerAngles = _localSwordRotation;
+        IsSwordInHand = true;
+        _characterHaveSword = true;
+    }
+
+    //private mehtods
+
+    private void ApplySwordBehaviour()
+    {
         if (IsSwordInHand) //if this is true you can put your weapon at your back
         {
             SetSwordAtCharactersBack();
@@ -87,7 +110,10 @@ public class SwordController : MonoBehaviour {
                 //the character has no sword so pick up a sword if you are in the trigger zone
             }
         }
+    }
 
+    private void SetTransformOffSwordOnCharacter()
+    {
         //give sword the correct position and rotation on the character
         if (!_isWeaponArmed)
         {
@@ -103,6 +129,7 @@ public class SwordController : MonoBehaviour {
         else if (!_isSwordAtBack && _characterHaveSword)
         {
             //Debug.Log("take weapon animation + use sword locomotion");
+           
             _ac.TakeWeaponFromBack(false);
             _ac.UseSwordLocomotionAnimation(true);
 
@@ -110,8 +137,10 @@ public class SwordController : MonoBehaviour {
             _transform.localPosition = _localSwordPosition;
             _transform.localEulerAngles = _localSwordRotation;
         }
+    }
 
-
+    private void ApplyMeleeAttack()
+    {
         if (IsSwordInHand && _ic.IsButtonBPressed())
         {
             _setMeleeActive = true;
@@ -120,20 +149,7 @@ public class SwordController : MonoBehaviour {
         {
             _setMeleeActive = false;
         }
-
-        _ac.AttackMeleeAnimation(_setMeleeActive);
     }
-
-    public void TakeSword(Transform parent)
-    {
-        _transform.parent = parent;
-        _transform.localPosition = _localSwordPosition;
-        _transform.localEulerAngles = _localSwordRotation;
-        IsSwordInHand = true;
-        _characterHaveSword = true;
-    }
-
-    //private mehtods
 
     private void SetSwordAtCharactersBack()
     {
