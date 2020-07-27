@@ -1,14 +1,14 @@
 # CharacterPhysicsAnimationsAI
 
-For school we have an assignement to make a level where a character can walk around.
+For school we had an assignement to make a level where a character can perform some actions.
 This character can walk, run, jump and crouch.
-He has also some actions like push boxes, click a switch, climb a ladder and pick up a sword.
+He can also do some actions like pushing a box, clicking a switch, climbing a ladder and picking up a sword.
 
-I used a charactercontroller to make all this happen. Together with animations from [mixamo](https://www.mixamo.com).
+I used a charactercontroller to make all this happen, together with the animations from [mixamo](https://www.mixamo.com).
 All the actions and locomotions are physic based.
 
-There is alse a NPC that will do some AI.
-For this i used a behaviour tree.
+There is also a NPC that will do some AI.
+For this I used a behaviour tree.
 
 
 ## Getting Started
